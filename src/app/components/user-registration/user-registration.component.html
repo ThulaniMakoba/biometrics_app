@@ -1,18 +1,55 @@
-<form (ngSubmit)="createCustomer()">
-    <label for="firstName">First Name:</label>
-    <input type="text" id="firstname" [(ngModel)]="userModel.firstName" name="firstName" required>
+<div>
+    <a [routerLink]="['../login']">Go to Login</a>
+    <mat-card>
+      <mat-card-title>New User Registion</mat-card-title>
+      <br>
+  
+      <mat-card-content>
+        <form (ngSubmit)="createCustomer()">
 
-    <label for="lastName">Last Name:</label>
-    <input type="text" id="firstname" [(ngModel)]="userModel.lastName" name="lastName" required>
+            <mat-form-field class="mat-form-field" >
+                <mat-label>ID Number</mat-label>
+                <input matInput formControlName="ID Number" />                
+            </mat-form-field>
 
-    <label for="userName">Username:</label>
-    <input type="text" id="username" [(ngModel)]="userModel.userName" name="userName" required>
+            <br>
+            <mat-form-field class="mat-form-field" >
+                <mat-label>First Name</mat-label>
+                <input matInput formControlName="FirstName" />                
+            </mat-form-field>
 
-    <label for="email">Email:</label>
-    <input type="email" id="email" [(ngModel)]="userModel.email" name="email" required>
+            <br>
 
-    <button type="submit">Register</button>
-</form>
+            <mat-form-field class="mat-form-field">
+                <mat-label>Last Name</mat-label>
+                <input matInput formControlName="LastName" />                
+            </mat-form-field>
+
+            <br>
+
+            <mat-form-field class="mat-form-field">
+                <mat-label>Email</mat-label>
+                <input matInput formControlName="Email" />                
+            </mat-form-field>
+
+            <br>
+
+            <mat-form-field class="mat-form-field">
+                <mat-label>Username</mat-label>
+                <input matInput formControlName="Username" />                
+            </mat-form-field>
+
+            <br>          
+
+            <button mat-raised-button color="primary" type="submit">Register</button>
+  
+        </form>
+      </mat-card-content>
+  
+    </mat-card>
+  </div>
+
+
 <br/>
 <div *ngIf="canDisplayCamera">
 <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
