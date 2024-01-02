@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { CreateCustomerResponse } from 'src/app/models/create-customer-response.model';
 import { CreateReferenceFaceRequestModel, DetectionModel } from 'src/app/models/create-reference-face-request.model';
 import { CreateReferenceFaceResponse } from 'src/app/models/create-reference-face-response.model';
@@ -18,10 +19,25 @@ import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
   styleUrls: ['./user-registration.component.css']
 })
 export class UserRegistrationComponent {
-  userModel: UserModel = new UserModel();
+  userModel: UserModel = {
+    firstName: '',
+    lastName: '',
+    userName: '',
+    email: '',
+    idNumber: '',
+    computerMotherSerialNumber: ''
+  } ;
   computerSid: string | null = localStorage.getItem('computerSid');
   windowsProfileId: string = '6ABF775B-3A03-4608-946F-6127D9A510AB';
   computerSidExist: string | null = localStorage.getItem('computerSidExist');
+
+  userRegistrationForm = new FormGroup({
+    idNumber: new FormControl(''),
+    firstName: new FormControl(''),
+    lastName: new FormControl(''),
+    userName: new FormControl(''),
+    email: new FormControl(''),
+  })
 
   referenceFaceModel: CreateReferenceFaceRequestModel = {
     Image: new ImageModel(),
@@ -104,7 +120,7 @@ export class UserRegistrationComponent {
 
     this.innovatricsService.createReferenceFace(this.referenceFaceModel).subscribe({
       next: (response: CreateReferenceFaceResponse) => {
-        this.registerUser(response.id);
+        // this.registerUser(response.id);
       },
       complete: () => {
       },
@@ -114,11 +130,8 @@ export class UserRegistrationComponent {
     })
   }
 
-  registerUser(innovatricsFaceId: string): void {
-    this.userModel.innovatricsFaceId = innovatricsFaceId;
-    this.userModel.computerSid = this.computerSid ?? "";
-    this.userModel.windowsProfileId = this.windowsProfileId;
-    this.userModel.base64Image = this.referenceFaceModel.Image.Data as string;
+  registerUser(): void {
+    this.handleUserDetailsFormData();
 
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
@@ -132,6 +145,15 @@ export class UserRegistrationComponent {
         console.error('Error registering user:', error);
       }
     })
+  }
+
+  handleUserDetailsFormData() {    
+    this.userModel.computerMotherSerialNumber = this.computerSid ?? "";
+    this.userModel.idNumber = this.userRegistrationForm.get('idNumber')?.value ?? "";
+    this.userModel.firstName = this.userRegistrationForm.get('firstName')?.value ?? "";
+    this.userModel.lastName = this.userRegistrationForm.get('lastName')?.value ?? "";
+    this.userModel.userName = this.userRegistrationForm.get('userName')?.value ?? "";
+    this.userModel.email = this.userRegistrationForm.get('email')?.value ?? "";
   }
 
   handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {
