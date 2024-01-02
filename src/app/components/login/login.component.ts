@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CreateCustomerResponse } from 'src/app/models/create-customer-response.model';
 import { CreateReferenceFaceRequestModel, DetectionModel } from 'src/app/models/create-reference-face-request.model';
 import { CreateReferenceFaceResponse } from 'src/app/models/create-reference-face-response.model';
-import { ImageModel } from 'src/app/models/image.model';
 import { PassiveLivenessSelfieRequestModel } from 'src/app/models/passive-liveness-selfie-request.model';
-import { RegisterUserResponse } from 'src/app/models/register-user-response.model';
-import { UserModel } from 'src/app/models/user-model';
+import { ProbeFaceRequest } from 'src/app/models/probe-face-request.model';
+import { ScoreResponse } from 'src/app/models/score-response.model';
+import { VerificationResponse } from 'src/app/models/verification-response.model';
+import { VerificationRequest } from 'src/app/models/verify-user-request.model';
 import { InnovatricsService } from 'src/app/services/innovatrics.service';
 import { MessageService } from 'src/app/services/message.service';
 import { UserService } from 'src/app/services/user.service';
@@ -13,31 +15,47 @@ import { OnPhotoTakenEventValue } from 'src/app/types';
 import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
 
 @Component({
-  selector: 'app-user-registration',
-  templateUrl: './user-registration.component.html',
-  styleUrls: ['./user-registration.component.css']
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class UserRegistrationComponent {
-  userModel: UserModel = new UserModel();
-  computerSid: string | null = localStorage.getItem('computerSid');
-  windowsProfileId: string = '6ABF775B-3A03-4608-946F-6127D9A510AB';
-  computerSidExist: string | null = localStorage.getItem('computerSidExist');
+export class LoginComponent implements OnInit {
 
-  referenceFaceModel: CreateReferenceFaceRequestModel = {
-    Image: new ImageModel(),
-    Detection: new DetectionModel()
+  constructor(private userService: UserService, private router: Router,
+     private messageService: MessageService, private innovatricsService: InnovatricsService) { }
+
+  showCamera: boolean = false;
+  showMessage: boolean = false;
+  imageUrl = '';
+  probeFaceRequest: ProbeFaceRequest = new ProbeFaceRequest();
+  referenceFaceId: string = '';
+  customerId: string = '';
+  passiveLivenessSelfieModel: PassiveLivenessSelfieRequestModel = new PassiveLivenessSelfieRequestModel();
+  photoImage: string = '';
+  retryCount: number = 0;
+  maxRetry: number = 3;
+
+  userVerification: VerificationRequest = {
+    computerSid: localStorage.getItem('computerSid') ?? "",
+    windowsProfileId: '6ABF775B-3A03-4608-946F-6127D9A510AB'
   }
 
-  passiveLivenessSelfieModel: PassiveLivenessSelfieRequestModel = new PassiveLivenessSelfieRequestModel();
+  ngOnInit(): void {
+    this.verifyUser(this.userVerification)
+  }
 
-  imageUrl = '';
-  canDisplayCamera: boolean = false;
-  showImage: boolean = false;
-  customerId: string = '';
-  photoImage: string = '';
-
-  constructor(private userService: UserService, private messageService: MessageService,
-    private innovatricsService: InnovatricsService) { }
+  verifyUser(request: VerificationRequest) {
+    this.userService.verifyUser(request).subscribe({
+      next: (response: VerificationResponse) => {
+        if (response.userExist) {
+          this.referenceFaceId = response.referenceFaceId;
+          this.createCustomer();
+        }
+        else
+          this.showMessage = true;
+      }
+    })
+  }
 
   // TODO: Remove this code, use handleLiveness class to implement below code
   createCustomer(): void {
@@ -56,7 +74,7 @@ export class UserRegistrationComponent {
   createLiveness(customerId: string): void {
     this.innovatricsService.createLiveness(customerId).subscribe({
       next: (response: CreateCustomerResponse) => {
-        this.canDisplayCamera = true;
+        this.showCamera = true;
         this.customerId = customerId;
       },
       error: (error) => {
@@ -84,10 +102,12 @@ export class UserRegistrationComponent {
         const score: number = +response.score;
 
         if (score < 0.89) {
-          this.messageService.sendMessage("Fail Liveness")
+          this.retryCount++;
+          this.evaluateRetries()
+          this.messageService.setMessage("Fail Liveness")
           return;
         }
-        this.createReferenceFace(this.photoImage);
+        this.probeFaceVerification(this.photoImage);
       },
       error: (error) => {
         console.error('Error Evaluating Passive Liveness:', error);
@@ -95,16 +115,24 @@ export class UserRegistrationComponent {
     })
   }
 
-  createReferenceFace(image: string) {
-    this.referenceFaceModel.Image.Data = image;
+  probeFaceVerification(image: unknown) {
+    this.probeFaceRequest.Image.Data = image;
+    this.probeFaceRequest.Detection.Mode = 'STRICT';
+    this.probeFaceRequest.Detection.Facesizeratio.Max = 0.5;
+    this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
+    this.probeFaceRequest.referenceFaceId = this.referenceFaceId;
 
-    this.referenceFaceModel.Detection.Mode = 'STRICT';
-    this.referenceFaceModel.Detection.Facesizeratio.Max = 0.5;
-    this.referenceFaceModel.Detection.Facesizeratio.Min = 0.05;
+    this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
+      next: (response: ScoreResponse) => {
+        console.log(response)
+        if (response.errorMessage) {
+          this.retryCount++;
+          alert(response.errorMessage);
+          this.evaluateRetries()
+          return;
+        }
 
-    this.innovatricsService.createReferenceFace(this.referenceFaceModel).subscribe({
-      next: (response: CreateReferenceFaceResponse) => {
-        this.registerUser(response.id);
+        this.router.navigate(['/home', { score: response.score }])
       },
       complete: () => {
       },
@@ -114,24 +142,9 @@ export class UserRegistrationComponent {
     })
   }
 
-  registerUser(innovatricsFaceId: string): void {
-    this.userModel.innovatricsFaceId = innovatricsFaceId;
-    this.userModel.computerSid = this.computerSid ?? "";
-    this.userModel.windowsProfileId = this.windowsProfileId;
-    this.userModel.base64Image = this.referenceFaceModel.Image.Data as string;
-
-    this.userService.register(this.userModel).subscribe({
-      next: (response: RegisterUserResponse) => {
-        if (!response.userId) {
-          alert(response.message)
-          return;
-        }
-        this.showImage = true;
-      },
-      error: (error) => {
-        console.error('Error registering user:', error);
-      }
-    })
+  evaluateRetries() {
+    if (this.retryCount === this.maxRetry)
+      this.showCamera = false;
   }
 
   handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {
@@ -141,6 +154,7 @@ export class UserRegistrationComponent {
         this.generatePassiveLivenessSelfie(base64String);
       });
   }
+
 
   handleError(error: Error) {
     alert(error);

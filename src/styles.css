@@ -10,6 +10,7 @@
   margin: 1rem auto;
   position: relative;
   overflow: hidden;
+  /*clip-path: circle(20% at 50%);*/
 }
 .button {
   display: inline-flex;

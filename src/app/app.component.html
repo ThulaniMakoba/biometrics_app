@@ -1,4 +1,4 @@
-<div>
+<div *ngIf="showInnovatrics">
   <h1>DOT components integration</h1>
   <div *ngIf="currentStep === step.USER_REGISTRATION">
     <app-user-registration>
@@ -15,6 +15,7 @@
       (onBack)="handleStepChange($event)">
     </app-face-auto-capture>
     <app-result *ngIf="imageUrl" [imageUrl]="imageUrl"></app-result>
+    <canvas #capturedCanvas style="display: none;"></canvas>
   </div>
   <div *ngIf="currentStep === step.MAGNIFEYE_LIVENESS">
     <app-magnifeye-liveness (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)"
@@ -31,3 +32,5 @@
   <app-component-select *ngIf="currentStep === step.SELECT_COMPONENT" (btnClick)="handleStepChange($event)">
   </app-component-select>
 </div>
+
+<app-navigation></app-navigation>

@@ -3,5 +3,8 @@ export class UserModel {
     public lastName: string;
     public userName: string;
     public email: string;
-    public innovatricsId: string;
+    public innovatricsFaceId: string;
+    public base64Image:string;
+    public computerSid: string;
+    public windowsProfileId:string;
 };

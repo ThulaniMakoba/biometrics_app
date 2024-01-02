@@ -19,6 +19,11 @@ import { SmileLivenessUiComponent } from './components/smile-liveness-ui/smile-l
 import { SmileLivenessComponent } from './components/smile-liveness/smile-liveness.component';
 import { HttpClientModule } from '@angular/common/http';
 import { UserRegistrationComponent } from './components/user-registration/user-registration.component';
+import { LoginComponent } from './components/login/login.component';
+import { NavigationComponent } from './components/navigation/navigation.component';
+import { HomeComponent } from './components/home/home.component';
+import { AppRoutingModule } from './app-routing.module';
+import { SuccessErrorComponent } from './components/success-error/success-error.component';
 
 @NgModule({
   declarations: [
@@ -37,10 +42,14 @@ import { UserRegistrationComponent } from './components/user-registration/user-r
     SmileLivenessCameraComponent,
     SmileLivenessUiComponent,
     SmileLivenessComponent,
-    UserRegistrationComponent
+    UserRegistrationComponent,
+    LoginComponent,
+    NavigationComponent,
+    HomeComponent,
+    SuccessErrorComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [BrowserModule, HttpClientModule, FormsModule],
+  imports: [BrowserModule, HttpClientModule, FormsModule, AppRoutingModule],
   providers: [],
   bootstrap: [AppComponent],
 })

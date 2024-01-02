@@ -13,8 +13,14 @@
 
     <button type="submit">Register</button>
 </form>
+<br/>
 <div *ngIf="canDisplayCamera">
 <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
 </app-face-auto-capture>
-<app-result *ngIf="imageUrl" [imageUrl]="imageUrl"></app-result>
+
+<br>
+<div>
+    <app-result *ngIf="showImage" [imageUrl]="imageUrl"></app-result>
+</div>
+
 </div>

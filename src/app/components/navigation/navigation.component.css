@@ -1,0 +1,40 @@
+nav {
+  background-color:dodgerblue;  
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .logo {
+    display: flex;
+    align-items: center;
+
+    img {
+      max-width: 40px;
+      max-height: 40px;
+      margin-right: 10px;
+    }
+
+    .title {
+      color: #fff;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  }
+
+  .links {
+    a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 16px;
+      margin-left: 20px;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  
+}
