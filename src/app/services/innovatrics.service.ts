@@ -12,7 +12,7 @@ import { ScoreResponse } from "../models/score-response.model";
 })
 
 export class InnovatricsService {
-    private apiUrl = 'http://localhost:59414/api/Innovatrics'
+    private apiUrl = 'https://ednaliteapi.azurewebsites.net/api/Innovatrics'
 
     constructor(private http: HttpClient) { }
 

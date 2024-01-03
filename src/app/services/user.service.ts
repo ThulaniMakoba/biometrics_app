@@ -17,33 +17,13 @@ import { RegisterUserResponse } from '../models/register-user-response.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:59414/api/User'
+  private apiUrl = 'https://ednaliteapi.azurewebsites.net/api/User'
 
-  constructor(private http: HttpClient) { }
-
-  // createCustomer(): Observable<CreateCustomerResponse> {
-  //   return this.http.post<CreateCustomerResponse>(`${this.apiUrl}/innovatrics-create-customer`, null)
-  // }
-
-  // createLiveness(customerId: string): Observable<CreateCustomerResponse> {
-  //   return this.http.put<CreateCustomerResponse>(`${this.apiUrl}/create-liveness/${customerId}`, null);
-  // }
-
-  // generatePassiveLivenessSelfie(customerId: string, request: PassiveLivenessSelfieRequestModel): Observable<unknown> {
-  //   return this.http.post(`${this.apiUrl}/passive-liveness-selfie/${customerId}`, request);
-  // }
-
-  // evaluatePassiveLiveness(customerId: string): Observable<ScoreResponse> {
-  //   return this.http.post<ScoreResponse>(`${this.apiUrl}/evaluate-passive-liveness/${customerId}`, null);
-  // }
+  constructor(private http: HttpClient) { } 
 
   register(request: UserModel): Observable<RegisterUserResponse> {
     return this.http.post<RegisterUserResponse>(`${this.apiUrl}/register`, request);
   }
-
-  // createReferenceFace(request: CreateReferenceFaceRequestModel): Observable<CreateReferenceFaceResponse> {
-  //   return this.http.post<CreateReferenceFaceResponse>(`${this.apiUrl}/innovatrics-create-reference-face`, request)
-  // }
 
   verifyUser(request: VerificationRequest): Observable<VerificationResponse> {
     return this.http.post<VerificationResponse>(`${this.apiUrl}/verify-user`, request)

@@ -7,12 +7,12 @@ import { ComputerConfigResponse } from '../models/computer-config-response.model
   providedIn: 'root'
 })
 export class ConfigService {
-  private apiUrl = 'http://localhost:59414/api/Config'
+  private apiUrl = 'https://ednaliteapi.azurewebsites.net/api/Config'
 
   constructor(private http: HttpClient) { }
 
   fetchComputerSidNumber(): Observable<ComputerConfigResponse> {
-    return this.http.get<ComputerConfigResponse>(`${this.apiUrl}/computer-sid`);
+    return this.http.get<ComputerConfigResponse>(`${this.apiUrl}/computer-motherboard`);
   }
 
 }
