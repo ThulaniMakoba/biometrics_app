@@ -49,7 +49,7 @@ export class UserRegistrationComponent {
 
   ngOnInit() {
     this.userRegistrationForm = this.formBuilder.group({
-      idNumber: ['', [Validators.required, Validators.minLength(13)]],
+      idNumber: ['', [Validators.required, this.validateIdNumber]],
         firstName: ['', Validators.required],
         lastName: ['', Validators.required],
         userName: ['', [Validators.required, Validators.minLength(3)]],
@@ -156,7 +156,8 @@ export class UserRegistrationComponent {
     if(this.userRegistrationForm.invalid)  
     {
       //console.log('Form is invalid');
-      return;
+      //return;
+      this.markFormGroupTouched(this.userRegistrationForm);
     }   
     
     this.handleUserDetailsFormData();
@@ -175,6 +176,26 @@ export class UserRegistrationComponent {
         this.alertService.error('Error registering user',true)
       }
     })
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.values(formGroup.controls).forEach(control => {
+      control.markAsTouched();
+
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
+  validateIdNumber(control: { value: any; }) {
+    const idNumber = control.value;
+
+    if (idNumber && idNumber.length === 13 && /^\d+$/.test(idNumber)) {
+      // Basic format validation, you can add more checks if needed
+      return null;
+    } else {
+      return { invalidIdNumber: true };
+    }
   }
 
   handleUserDetailsFormData() {    

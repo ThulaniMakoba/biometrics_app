@@ -3,7 +3,7 @@
     <div class="col-md-6 mx-auto">
         <div class="card">
             <div class="card-header">
-                <h3 class="display-5">Register</h3>
+                <h3 class="display-5">Register a new user</h3>
             </div>
             <div class="card-body">
 
@@ -16,6 +16,9 @@
                         <span class="text-danger" 
                             *ngIf="(f.idNumber.touched || submitted) &&
                             f.idNumber.errors?.['required']">ID Number is required
+                        </span>
+                        <span class="text-danger"
+                            *ngIf="f.idNumber.errors?.['invalidIdNumber'] && f.idNumber.touched">ID Number is Invalid
                         </span>
                     </div>
 
@@ -64,7 +67,7 @@
 
                     <div align="right">
                         <button type="submit" class="btn btn-success">Register</button>
-                        <!--<button type="reset" class="btn btn-danger ms-2" (click)="resetForm()">Reset</button>-->
+                        <button type="reset" class="btn btn-danger ms-2" (click)="resetForm()">Reset</button>
                     </div>
                 </form>
             </div>
