@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreateCustomerResponse } from 'src/app/models/create-customer-response.model';
 import { CreateReferenceFaceRequestModel, DetectionModel } from 'src/app/models/create-reference-face-request.model';
 import { CreateReferenceFaceResponse } from 'src/app/models/create-reference-face-response.model';
@@ -7,6 +7,7 @@ import { ImageModel } from 'src/app/models/image.model';
 import { PassiveLivenessSelfieRequestModel } from 'src/app/models/passive-liveness-selfie-request.model';
 import { RegisterUserResponse } from 'src/app/models/register-user-response.model';
 import { UserModel } from 'src/app/models/user-model';
+import { AlertService } from 'src/app/services/alert.service';
 import { InnovatricsService } from 'src/app/services/innovatrics.service';
 import { MessageService } from 'src/app/services/message.service';
 import { UserService } from 'src/app/services/user.service';
@@ -19,6 +20,10 @@ import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
   styleUrls: ['./user-registration.component.css']
 })
 export class UserRegistrationComponent {
+  
+  loading = false;
+  submitted = false;
+  
   userModel: UserModel = {
     firstName: '',
     lastName: '',
@@ -39,6 +44,23 @@ export class UserRegistrationComponent {
     email: new FormControl(''),
   })
 
+  constructor(private userService: UserService, private messageService: MessageService,private formBuilder: FormBuilder,
+    private innovatricsService: InnovatricsService,private alertService: AlertService) {}
+
+  ngOnInit() {
+    this.userRegistrationForm = this.formBuilder.group({
+      idNumber: ['', [Validators.required, Validators.minLength(13)]],
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+        userName: ['', [Validators.required, Validators.minLength(3)]],
+        email: ['', [Validators.required, Validators.email]],
+        
+    });
+}
+  protected get f() {
+    return this.userRegistrationForm.controls;
+  }
+
   referenceFaceModel: CreateReferenceFaceRequestModel = {
     Image: new ImageModel(),
     Detection: new DetectionModel()
@@ -52,9 +74,7 @@ export class UserRegistrationComponent {
   customerId: string = '';
   photoImage: string = '';
 
-  constructor(private userService: UserService, private messageService: MessageService,
-    private innovatricsService: InnovatricsService) { }
-
+  
   // TODO: Remove this code, use handleLiveness class to implement below code
   createCustomer(): void {
     this.innovatricsService.createCustomer().subscribe({
@@ -63,7 +83,7 @@ export class UserRegistrationComponent {
       },
       complete: () => {
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error create customer:', error);
       }
     })
@@ -75,7 +95,7 @@ export class UserRegistrationComponent {
         this.canDisplayCamera = true;
         this.customerId = customerId;
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error create liveness:', error);
       }
     })
@@ -85,10 +105,10 @@ export class UserRegistrationComponent {
     this.photoImage = jpegBase64ToStringBase64(image);
     this.passiveLivenessSelfieModel.image.Data = this.photoImage;
     this.innovatricsService.generatePassiveLivenessSelfie(this.customerId, this.passiveLivenessSelfieModel).subscribe({
-      next: (_) => {
+      next: (_: any) => {
         this.evaluatePassiveLiveness();
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error Generating Passive Liveness Selfie:', error);
       }
     })
@@ -96,7 +116,7 @@ export class UserRegistrationComponent {
 
   evaluatePassiveLiveness() {
     this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
-      next: (response) => {
+      next: (response: { score: string | number; }) => {
         const score: number = +response.score;
 
         if (score < 0.89) {
@@ -105,7 +125,7 @@ export class UserRegistrationComponent {
         }
         this.createReferenceFace(this.photoImage);
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error Evaluating Passive Liveness:', error);
       }
     })
@@ -124,25 +144,35 @@ export class UserRegistrationComponent {
       },
       complete: () => {
       },
-      error: (error) => {
+      error: (error: any) => {
         console.error('Error registering user:', error);
       }
     })
   }
 
   registerUser(): void {
+    debugger  
+    //Stop here if not valid
+    if(this.userRegistrationForm.invalid)  
+    {
+      //console.log('Form is invalid');
+      return;
+    }   
+    
     this.handleUserDetailsFormData();
-
+    
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
         if (!response.userId) {
-          alert(response.message)
+          //alert(response.message)
+          this.alertService.success('Registration successful', true);
           return;
         }
         this.showImage = true;
       },
       error: (error) => {
-        console.error('Error registering user:', error);
+        //console.error('Error registering user:', error);
+        this.alertService.error('Error registering user',true)
       }
     })
   }
@@ -168,4 +198,7 @@ export class UserRegistrationComponent {
     alert(error);
   }
 
+  protected resetForm(): void {
+    this.userRegistrationForm.reset();
+  }
 }

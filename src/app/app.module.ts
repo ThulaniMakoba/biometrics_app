@@ -30,6 +30,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { AlertComponent } from './components/Alerts/alert.component';
+
 
 @NgModule({
   declarations: [
@@ -49,6 +51,7 @@ import { MatIconModule } from '@angular/material/icon';
     SmileLivenessUiComponent,
     SmileLivenessComponent,
     UserRegistrationComponent,
+    AlertComponent,
     LoginComponent,
     NavigationComponent,
     HomeComponent,
