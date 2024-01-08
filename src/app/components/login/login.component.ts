@@ -36,7 +36,8 @@ export class LoginComponent implements OnInit {
   maxRetry: number = 3;
 
   userVerification: VerificationRequest = {
-    computerSid: localStorage.getItem('computerSid') ?? "",
+    computerMotherboardSerialNumber : "6ABF775B-3A03-4608-946F-6127D9A510AB",
+    // computerSid: localStorage.getItem('computerSid') ?? "6ABF775B-3A03-4608-946F-6127D9A510AB",
     windowsProfileId: '6ABF775B-3A03-4608-946F-6127D9A510AB'
   }
 

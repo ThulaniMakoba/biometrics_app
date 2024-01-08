@@ -1,5 +1,5 @@
 <br><br>
-<div class="row">
+<div class="row" *ngIf="hideRegistration">
     <div class="col-md-6 mx-auto">
         <div class="card">
             <div class="card-header">
@@ -13,8 +13,7 @@
                         <label for="idNumber" class="form-label">Id Number</label>
                         <input type="text" formControlName="idNumber" class="form-control"
                             [ngClass]="{ 'is-invalid': submitted && f.idNumber.errors }" />
-                        <span class="text-danger" 
-                            *ngIf="(f.idNumber.touched || submitted) &&
+                        <span class="text-danger" *ngIf="(f.idNumber.touched || submitted) &&
                             f.idNumber.errors?.['required']">ID Number is required
                         </span>
                         <span class="text-danger"
@@ -26,8 +25,7 @@
                         <label for="firstName" class="form-label">First Name</label>
                         <input type="text" formControlName="firstName" class="form-control"
                             [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" />
-                        <span class="text-danger" 
-                            *ngIf="(f.firstName.touched || submitted) &&
+                        <span class="text-danger" *ngIf="(f.firstName.touched || submitted) &&
                             f.firstName.errors?.['required']">First Name is required
                         </span>
                     </div>
@@ -35,33 +33,31 @@
                         <label for="lastName" class="form-label">Last Name</label>
                         <input type="text" formControlName="lastName" class="form-control"
                             [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }" />
-                        <span class="text-danger" 
-                            *ngIf="(f.lastName.touched || submitted) &&
+                        <span class="text-danger" *ngIf="(f.lastName.touched || submitted) &&
                             f.lastName.errors?.['required']">Last Name is required
                         </span>
                     </div>
                     <div class="mb-3">
                         <label for="Email" class="form-label">Email</label>
                         <input type="text" class="form-control" formControlName="email" />
-                        <span class="text-danger" 
+                        <span class="text-danger"
                             *ngIf="(f.email.touched || submitted) && f.email.errors?.['required']">Email is required
                         </span>
-                        <span class="text-danger" 
-                            *ngIf="f.email.touched && f.email.errors?.['email']">Enter a valid email address
+                        <span class="text-danger" *ngIf="f.email.touched && f.email.errors?.['email']">Enter a valid
+                            email address
                         </span>
                     </div>
-                    
+
                     <div class="mb-3">
                         <label for="userName" class="form-label">User Name</label>
                         <input type="text" formControlName="userName" class="form-control"
                             [ngClass]="{ 'is-invalid': submitted && f.userName.errors }" />
-                        <span class="text-danger" 
-                            *ngIf="(f.userName.touched || submitted) &&
+                        <span class="text-danger" *ngIf="(f.userName.touched || submitted) &&
                             f.userName.errors?.['required']">UserName is required
                         </span>
                     </div>
 
-                    
+
 
 
 
@@ -73,4 +69,10 @@
             </div>
         </div>
     </div>
+</div>
+
+<div *ngIf="showCamera">
+    <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
+    </app-face-auto-capture>
+    <app-result *ngIf="imageUrl" [imageUrl]="imageUrl"></app-result>
 </div>

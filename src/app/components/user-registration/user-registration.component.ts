@@ -20,10 +20,12 @@ import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
   styleUrls: ['./user-registration.component.css']
 })
 export class UserRegistrationComponent {
-  
+
   loading = false;
   submitted = false;
-  
+  showCamera: boolean = false;
+  hideRegistration: boolean = true;
+
   userModel: UserModel = {
     firstName: '',
     lastName: '',
@@ -31,7 +33,7 @@ export class UserRegistrationComponent {
     email: '',
     idNumber: '',
     computerMotherSerialNumber: ''
-  } ;
+  };
   computerSid: string | null = localStorage.getItem('computerSid');
   windowsProfileId: string = '6ABF775B-3A03-4608-946F-6127D9A510AB';
   computerSidExist: string | null = localStorage.getItem('computerSidExist');
@@ -44,19 +46,19 @@ export class UserRegistrationComponent {
     email: new FormControl(''),
   })
 
-  constructor(private userService: UserService, private messageService: MessageService,private formBuilder: FormBuilder,
-    private innovatricsService: InnovatricsService,private alertService: AlertService) {}
+  constructor(private userService: UserService, private messageService: MessageService, private formBuilder: FormBuilder,
+    private innovatricsService: InnovatricsService, private alertService: AlertService) { }
 
   ngOnInit() {
     this.userRegistrationForm = this.formBuilder.group({
       idNumber: ['', [Validators.required, this.validateIdNumber]],
-        firstName: ['', Validators.required],
-        lastName: ['', Validators.required],
-        userName: ['', [Validators.required, Validators.minLength(3)]],
-        email: ['', [Validators.required, Validators.email]],
-        
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
+      userName: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+
     });
-}
+  }
   protected get f() {
     return this.userRegistrationForm.controls;
   }
@@ -74,7 +76,7 @@ export class UserRegistrationComponent {
   customerId: string = '';
   photoImage: string = '';
 
-  
+
   // TODO: Remove this code, use handleLiveness class to implement below code
   createCustomer(): void {
     this.innovatricsService.createCustomer().subscribe({
@@ -151,29 +153,30 @@ export class UserRegistrationComponent {
   }
 
   registerUser(): void {
-    debugger  
+
     //Stop here if not valid
-    if(this.userRegistrationForm.invalid)  
-    {
+    if (this.userRegistrationForm.invalid) {
       //console.log('Form is invalid');
       //return;
       this.markFormGroupTouched(this.userRegistrationForm);
-    }   
-    
+    }
+
     this.handleUserDetailsFormData();
-    
+
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
-        if (!response.userId) {
+        if (response.userId) {
           //alert(response.message)
           this.alertService.success('Registration successful', true);
+          this.showCamera = true;
+          this.hideRegistration = false;
           return;
         }
         this.showImage = true;
       },
       error: (error) => {
         //console.error('Error registering user:', error);
-        this.alertService.error('Error registering user',true)
+        this.alertService.error('Error registering user', true)
       }
     })
   }
@@ -198,7 +201,7 @@ export class UserRegistrationComponent {
     }
   }
 
-  handleUserDetailsFormData() {    
+  handleUserDetailsFormData() {
     this.userModel.computerMotherSerialNumber = this.computerSid ?? "";
     this.userModel.idNumber = this.userRegistrationForm.get('idNumber')?.value ?? "";
     this.userModel.firstName = this.userRegistrationForm.get('firstName')?.value ?? "";

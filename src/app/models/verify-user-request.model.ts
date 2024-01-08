@@ -1,4 +1,4 @@
 export interface VerificationRequest {
-    computerSid: string;
+    computerMotherboardSerialNumber : string;
     windowsProfileId: string;
 }
