@@ -10,69 +10,94 @@
                 <form [formGroup]="userRegistrationForm" (ngSubmit)="registerUser()">
 
                     <div class="mb-3">
-                        <label for="idNumber" class="form-label">Id Number</label>
+                        <label for="idNumber" class="required" style="text-align: left;">Id Number</label>
                         <input type="text" formControlName="idNumber" class="form-control"
-                            [ngClass]="{ 'is-invalid': submitted && f.idNumber.errors }" />
-                        <span class="text-danger" *ngIf="(f.idNumber.touched || submitted) &&
-                            f.idNumber.errors?.['required']">ID Number is required
+                            [ngClass]="{ 'is-invalid': submitted && f.idNumber.errors }" placeholder="Enter your ID Number " />
+                        <span class="text-danger" *ngIf="(f.idNumber.touched || submitted) && f.idNumber.errors?.['required']">
+                            ID Number is required
                         </span>
-                        <span class="text-danger"
-                            *ngIf="f.idNumber.errors?.['invalidIdNumber'] && f.idNumber.touched">ID Number is Invalid
+                        <span class="text-danger" *ngIf="f.idNumber.errors?.['invalidIdNumber'] && f.idNumber.touched">
+                            ID Number is Invalid
                         </span>
                     </div>
+                    
 
                     <div class="mb-3">
-                        <label for="firstName" class="form-label">First Name</label>
+                        <label for="firstName" class="required">First Name</label>
                         <input type="text" formControlName="firstName" class="form-control"
-                            [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" />
+                            [ngClass]="{ 'is-invalid': submitted && f.firstName.errors }" placeholder="Enter your First Name " />
                         <span class="text-danger" *ngIf="(f.firstName.touched || submitted) &&
                             f.firstName.errors?.['required']">First Name is required
                         </span>
                     </div>
+
                     <div class="mb-3">
-                        <label for="lastName" class="form-label">Last Name</label>
+                        <label for="lastName" class="required">Last Name</label>
                         <input type="text" formControlName="lastName" class="form-control"
-                            [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }" />
+                            [ngClass]="{ 'is-invalid': submitted && f.lastName.errors }" placeholder="Enter your Last Name " />
                         <span class="text-danger" *ngIf="(f.lastName.touched || submitted) &&
                             f.lastName.errors?.['required']">Last Name is required
                         </span>
                     </div>
-                    <div class="mb-3">
-                        <label for="Email" class="form-label">Email</label>
-                        <input type="text" class="form-control" formControlName="email" />
-                        <span class="text-danger"
-                            *ngIf="(f.email.touched || submitted) && f.email.errors?.['required']">Email is required
-                        </span>
-                        <span class="text-danger" *ngIf="f.email.touched && f.email.errors?.['email']">Enter a valid
-                            email address
-                        </span>
-                    </div>
 
                     <div class="mb-3">
-                        <label for="userName" class="form-label">User Name</label>
+                        <label for="email" class="required">Email</label>
+                        <input type="text" class="form-control" formControlName="email" placeholder="Enter your email address" />
+                        <span class="text-danger" *ngIf="(f.email.touched || submitted) && f.email.errors?.['required']">
+                            Email is required
+                        </span>
+                        <span class="text-danger" *ngIf="f.email.touched && f.email.errors?.['email']">
+                            Enter a valid email address
+                        </span>
+                    </div>
+                    
+
+                    <div class="mb-3">
+                        <label for="userName" class="required">Username</label>
                         <input type="text" formControlName="userName" class="form-control"
-                            [ngClass]="{ 'is-invalid': submitted && f.userName.errors }" />
+                            [ngClass]="{ 'is-invalid': submitted && f.userName.errors }" placeholder="Enter your Username "  />
                         <span class="text-danger" *ngIf="(f.userName.touched || submitted) &&
                             f.userName.errors?.['required']">UserName is required
                         </span>
                     </div>
-
-
-
-
-
-                    <div align="right">
-                        <button type="submit" class="btn btn-success">Register</button>
-                        <button type="reset" class="btn btn-danger ms-2" (click)="resetForm()">Reset</button>
+                    <div class="d-flex justify-content-between">
+                        <button type="reset" class="btn btn-danger">
+                            Reset <i class="fas fa-times"></i>
+                        </button>
+                        <button type="submit" class="btn btn-success ms-auto">
+                            Register <i class="fas fa-arrow-right"></i>
+                        </button>
                     </div>
+                    
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<div *ngIf="showCamera">
-    <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
-    </app-face-auto-capture>
-    <app-result *ngIf="imageUrl" [imageUrl]="imageUrl"></app-result>
+<!-- <div class="row">
+    <div class="col-md-6" *ngIf="showCamera">
+        <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
+        </app-face-auto-capture>
+    </div>
+    <div class="col-md-6" >
+        
+        <H1 ng-style="imageUrl ? color = black : grey">Captured Face</H1> 
+        <div *ngIf="imageUrl"> <app-result [imageUrl]="imageUrl"></app-result></div>
+        
+    </div>
+</div> -->
+<div class="row">
+    <div class="col-md-6" *ngIf="showCamera">
+        <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
+        </app-face-auto-capture>
+    </div>
+    
+    <div class="col-md-6">
+        <H1 ng-style="imageUrl ? color = black : grey">Captured Face</H1> 
+        <br>
+        <br>
+        <br>
+        <div *ngIf="imageUrl"> <app-result [imageUrl]="imageUrl"></app-result></div>
+    </div>
 </div>

@@ -23,8 +23,8 @@ export class UserRegistrationComponent {
 
   loading = false;
   submitted = false;
-  showCamera: boolean = false;
-  hideRegistration: boolean = true;
+  showCamera: boolean = true;
+  hideRegistration: boolean = false;
 
   userModel: UserModel = {
     firstName: '',
@@ -35,7 +35,7 @@ export class UserRegistrationComponent {
     computerMotherSerialNumber: ''
   };
   computerSid: string | null = localStorage.getItem('computerSid');
-  windowsProfileId: string = '6ABF775B-3A03-4608-946F-6127D9A510AB';
+  windowsProfileId: string = '1ABF775B-3A03-4608-946F-6127D9A510AB';
   computerSidExist: string | null = localStorage.getItem('computerSidExist');
 
   userRegistrationForm = new FormGroup({

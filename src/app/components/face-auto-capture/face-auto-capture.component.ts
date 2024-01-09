@@ -10,6 +10,8 @@ import { FaceComponentData } from '@innovatrics/dot-face-auto-capture/';
 @Component({
   selector: 'app-face-auto-capture',
   templateUrl: './face-auto-capture.component.html',
+  
+  
 })
 export class FaceAutoCaptureComponent implements OnInit {
   @Output() onPhotoTaken = new EventEmitter<OnPhotoTakenEventValue<FaceComponentData>>();
