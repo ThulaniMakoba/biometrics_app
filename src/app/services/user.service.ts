@@ -17,7 +17,7 @@ import { RegisterUserResponse } from '../models/register-user-response.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'https://ednaliteapi.azurewebsites.net/api/User'
+  private apiUrl = 'http://localhost:59414/api/User'
 
   constructor(private http: HttpClient) { } 
 

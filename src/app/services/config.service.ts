@@ -7,7 +7,7 @@ import { ComputerConfigResponse } from '../models/computer-config-response.model
   providedIn: 'root'
 })
 export class ConfigService {
-  private apiUrl = 'https://ednaliteapi.azurewebsites.net/api/Config'
+  private apiUrl = 'http://localhost:59414/api/Config'
 
   constructor(private http: HttpClient) { }
 

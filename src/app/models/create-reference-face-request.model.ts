@@ -3,6 +3,7 @@ import { ImageModel } from "./image.model";
 export class CreateReferenceFaceRequestModel {
     public Image: ImageModel = new ImageModel();
     public Detection: DetectionModel = new DetectionModel();
+    public UserId: number;
 }
 
 export class DetectionModel {

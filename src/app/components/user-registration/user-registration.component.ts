@@ -23,8 +23,17 @@ export class UserRegistrationComponent {
 
   loading = false;
   submitted = false;
-  showCamera: boolean = true;
-  hideRegistration: boolean = false;
+  showCamera: boolean = false;
+  showRegistration: boolean = true;
+  userId: number;
+  imageUrl = '';
+  customerId: string = '';
+  photoImage: string = '';
+
+  computerSid: string | null = localStorage.getItem('computerSid');
+  windowsProfileId: string = '6ABF775B-3A03-4608-946F-6127D9A510AB';
+  computerSidExist: string | null = localStorage.getItem('computerSidExist');
+
 
   userModel: UserModel = {
     firstName: '',
@@ -34,9 +43,7 @@ export class UserRegistrationComponent {
     idNumber: '',
     computerMotherSerialNumber: ''
   };
-  computerSid: string | null = localStorage.getItem('computerSid');
-  windowsProfileId: string = '1ABF775B-3A03-4608-946F-6127D9A510AB';
-  computerSidExist: string | null = localStorage.getItem('computerSidExist');
+
 
   userRegistrationForm = new FormGroup({
     idNumber: new FormControl(''),
@@ -65,16 +72,11 @@ export class UserRegistrationComponent {
 
   referenceFaceModel: CreateReferenceFaceRequestModel = {
     Image: new ImageModel(),
-    Detection: new DetectionModel()
+    Detection: new DetectionModel(),
+    UserId: 0,
   }
 
   passiveLivenessSelfieModel: PassiveLivenessSelfieRequestModel = new PassiveLivenessSelfieRequestModel();
-
-  imageUrl = '';
-  canDisplayCamera: boolean = false;
-  showImage: boolean = false;
-  customerId: string = '';
-  photoImage: string = '';
 
 
   // TODO: Remove this code, use handleLiveness class to implement below code
@@ -94,8 +96,10 @@ export class UserRegistrationComponent {
   createLiveness(customerId: string): void {
     this.innovatricsService.createLiveness(customerId).subscribe({
       next: (response: CreateCustomerResponse) => {
-        this.canDisplayCamera = true;
+        console.log('createLiveness response =>', response)
         this.customerId = customerId;
+        this.showCamera = true;
+        this.showRegistration = false;
       },
       error: (error: any) => {
         console.error('Error create liveness:', error);
@@ -120,8 +124,9 @@ export class UserRegistrationComponent {
     this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
       next: (response: { score: string | number; }) => {
         const score: number = +response.score;
-
+        //The code should be move to the back end
         if (score < 0.89) {
+          //use the alert service to display the message
           this.messageService.sendMessage("Fail Liveness")
           return;
         }
@@ -139,6 +144,7 @@ export class UserRegistrationComponent {
     this.referenceFaceModel.Detection.Mode = 'STRICT';
     this.referenceFaceModel.Detection.Facesizeratio.Max = 0.5;
     this.referenceFaceModel.Detection.Facesizeratio.Min = 0.05;
+    this.referenceFaceModel.UserId = this.userId;
 
     this.innovatricsService.createReferenceFace(this.referenceFaceModel).subscribe({
       next: (response: CreateReferenceFaceResponse) => {
@@ -153,11 +159,7 @@ export class UserRegistrationComponent {
   }
 
   registerUser(): void {
-
-    //Stop here if not valid
     if (this.userRegistrationForm.invalid) {
-      //console.log('Form is invalid');
-      //return;
       this.markFormGroupTouched(this.userRegistrationForm);
     }
 
@@ -168,11 +170,10 @@ export class UserRegistrationComponent {
         if (response.userId) {
           //alert(response.message)
           this.alertService.success('Registration successful', true);
-          this.showCamera = true;
-          this.hideRegistration = false;
+          this.userId = response.userId;
+          this.createCustomer();
           return;
         }
-        this.showImage = true;
       },
       error: (error) => {
         //console.error('Error registering user:', error);
@@ -190,6 +191,8 @@ export class UserRegistrationComponent {
       }
     });
   }
+
+  //Move this validation to util class, make it a helper
   validateIdNumber(control: { value: any; }) {
     const idNumber = control.value;
 
