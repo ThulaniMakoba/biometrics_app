@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { CreateCustomerResponse } from 'src/app/models/create-customer-response.model';
 import { CreateReferenceFaceRequestModel, DetectionModel } from 'src/app/models/create-reference-face-request.model';
 import { CreateReferenceFaceResponse } from 'src/app/models/create-reference-face-response.model';
+import { CreateReferenceFaceWithoutBackgroundResponse } from 'src/app/models/create-reference-face-without-background-response.model';
 import { ImageModel } from 'src/app/models/image.model';
 import { PassiveLivenessSelfieRequestModel } from 'src/app/models/passive-liveness-selfie-request.model';
 import { RegisterUserResponse } from 'src/app/models/register-user-response.model';
@@ -146,8 +147,9 @@ export class UserRegistrationComponent {
     this.referenceFaceModel.Detection.Facesizeratio.Min = 0.05;
     this.referenceFaceModel.UserId = this.userId;
 
-    this.innovatricsService.createReferenceFace(this.referenceFaceModel).subscribe({
-      next: (response: CreateReferenceFaceResponse) => {
+    this.innovatricsService.createReferenceFaceWithoutBackground(this.referenceFaceModel).subscribe({
+      next: (response: CreateReferenceFaceWithoutBackgroundResponse) => {
+        console.log('base64Image =>', response.base64Image)
         // this.registerUser(response.id);
       },
       complete: () => {

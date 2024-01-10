@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { CreateCustomerResponse } from "../models/create-customer-response.model";
 import { CreateReferenceFaceRequestModel } from "../models/create-reference-face-request.model";
 import { CreateReferenceFaceResponse } from "../models/create-reference-face-response.model";
+import {CreateReferenceFaceWithoutBackgroundResponse} from "../models/create-reference-face-without-background-response.model"
 import { PassiveLivenessSelfieRequestModel } from "../models/passive-liveness-selfie-request.model";
 import { ScoreResponse } from "../models/score-response.model";
 
@@ -35,4 +36,9 @@ export class InnovatricsService {
     createReferenceFace(request: CreateReferenceFaceRequestModel): Observable<CreateReferenceFaceResponse> {
         return this.http.post<CreateReferenceFaceResponse>(`${this.apiUrl}/create-reference-face`, request)
     }
+
+    createReferenceFaceWithoutBackground(request: CreateReferenceFaceRequestModel):Observable<CreateReferenceFaceWithoutBackgroundResponse>{
+        return this.http.post<CreateReferenceFaceWithoutBackgroundResponse>(`${this.apiUrl}/create-reference-face-with-out-background`, request)
+    }
+    
 }
