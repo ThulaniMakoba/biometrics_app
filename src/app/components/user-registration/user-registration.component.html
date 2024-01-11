@@ -90,12 +90,16 @@
         </app-face-auto-capture>
     </div>
 
-    <div class="col-md-6" *ngIf="imageUrl">
+    <div class="col-md-6">
         <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Captured Face</h1>
         <br>
         <br>
         <div *ngIf="!imageUrl && showSpinner">           
-            <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+            <!-- <mat-progress-spinner mode="indeterminate"></mat-progress-spinner> -->
+            
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
         </div>
         <div *ngIf="!imageUrl && !showSpinner">
             <img src="assets/placeholder_face.png" alt="image">
