@@ -67,7 +67,7 @@
                             f.userName.errors?.['required']">UserName is required
                         </span>
                     </div>
-                    <div class="d-flex justify-content-between">
+                    <div *ngIf="!hideActionButtons" class="d-flex justify-content-between">
                         <button type="reset" class="btn btn-danger">
                             Reset <i class="fas fa-times"></i>
                         </button>
@@ -82,8 +82,6 @@
     </div>
 </div>
 
-
-<!-- your-component.component.html -->
 <div class="row" *ngIf="showCamera">
     <div class="col-md-6">
         <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
@@ -94,9 +92,9 @@
         <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Captured Face</h1>
         <br>
         <br>
-        <div *ngIf="!imageUrl && showSpinner">           
+        <div *ngIf="!imageUrl && showSpinner">
             <!-- <mat-progress-spinner mode="indeterminate"></mat-progress-spinner> -->
-            
+
             <div class="loader-container">
                 <div class="loader"></div>
             </div>
@@ -107,6 +105,6 @@
         <div *ngIf="imageUrl">
             <app-result [imageUrl]="imageUrl"></app-result>
         </div>
-        
+
     </div>
 </div>

@@ -33,6 +33,7 @@ export class UserRegistrationComponent {
   customerId: string = '';
   photoImage: string = '';
   showSpinner: boolean = false;
+  hideActionButtons: boolean = false;
 
   motherboardSerialNumber: string | null = localStorage.getItem('motherboardSerialNumber');
   motherboardSerialNumberExist: string | null = localStorage.getItem('motherboardSerialNumberExist');
@@ -89,10 +90,21 @@ export class UserRegistrationComponent {
   checkIfComputerHasUser(verification: VerificationRequest) {
     this.userService.verifyUser(verification).subscribe({
       next: (response: VerificationResponse) => {
-        if (response.userExist)
+        if (response.userExist) {
+          this.disableFormFields();
+          this.hideActionButtons = true;
           this.alertService.error('Cannot register user, this computer has an existing user', false);
+        }
       }
     })
+  }
+
+  disableFormFields() {
+    this.userRegistrationForm.controls['idNumber'].disable();
+    this.userRegistrationForm.controls['firstName'].disable();
+    this.userRegistrationForm.controls['lastName'].disable();
+    this.userRegistrationForm.controls['userName'].disable();
+    this.userRegistrationForm.controls['email'].disable();
   }
 
   registerUser(): void {
@@ -191,10 +203,12 @@ export class UserRegistrationComponent {
     this.innovatricsService.createReferenceFaceWithoutBackground(this.referenceFaceModel).subscribe({
       next: (response: CreateReferenceFaceWithoutBackgroundResponse) => {
         if (response.errorMessage !== null || response.errorCode !== null) {
-          this.alertService.error(response.errorMessage);
+          this.alertService.error(`${response.errorMessage}, Please try again`,);
+          this.showSpinner = false;
           return;
         } else {
           this.convertBase64ToImageUrl(response.base64Image);
+          this.alertService.success("Successful Registered")
         }
       },
       complete: () => {
@@ -205,6 +219,7 @@ export class UserRegistrationComponent {
     })
   }
 
+  //Move this code to the utils class
   convertBase64ToImageUrl(base64Image: string) {
     const byteCharacters = atob(base64Image);
     const byteArrays = [];
@@ -257,12 +272,12 @@ export class UserRegistrationComponent {
   }
 
   handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {
-    //this.imageUrl = URL.createObjectURL(imageData.image);
     blobToBase64(URL.createObjectURL(imageData.image))
       .then(base64String => {
-        this.showSpinner = true
+        this.showSpinner = true;
+        this.imageUrl = '';
         this.generatePassiveLivenessSelfie(base64String);
-        console.log(base64String)
+        this.alertService.clear();
       });
   }
 
@@ -272,5 +287,5 @@ export class UserRegistrationComponent {
 
   protected resetForm(): void {
     this.userRegistrationForm.reset();
-  }  
+  }
 }
