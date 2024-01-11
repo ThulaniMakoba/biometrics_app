@@ -10,8 +10,8 @@
   margin: 1rem auto;
   position: relative;
   overflow: hidden;
-  /* width: 40px;
-  height: 300px; */
+  width: 40px;
+  height: 300px;
 
   /*clip-path: circle(20% at 50%);*/
 }

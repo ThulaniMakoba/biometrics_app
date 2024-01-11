@@ -75,29 +75,20 @@
     </div>
 </div>
 
-<!-- <div class="row">
-    <div class="col-md-6" *ngIf="showCamera">
-        <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
-        </app-face-auto-capture>
-    </div>
-    <div class="col-md-6" >
-        
-        <H1 ng-style="imageUrl ? color = black : grey">Captured Face</H1> 
-        <div *ngIf="imageUrl"> <app-result [imageUrl]="imageUrl"></app-result></div>
-        
-    </div>
-</div> -->
-<div class="row">
-    <div class="col-md-6" *ngIf="showCamera">
+
+<div class="row" *ngIf="showCamera">
+    <div class="col-md-6">
         <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
         </app-face-auto-capture>
     </div>
     
-    <div class="col-md-6">
-        <H1 ng-style="imageUrl ? color = black : grey">Captured Face</H1> 
+    <div class="col-md-6" *ngIf="imageUrl">
+        <H1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Captured Face</H1> 
         <br>
         <br>
-        <br>
-        <div *ngIf="imageUrl"> <app-result [imageUrl]="imageUrl"></app-result></div>
+        
+        <div>
+            <app-result [imageUrl]="imageUrl"></app-result>
+        </div>
     </div>
 </div>

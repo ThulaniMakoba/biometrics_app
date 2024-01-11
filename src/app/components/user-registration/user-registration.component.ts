@@ -148,9 +148,9 @@ export class UserRegistrationComponent {
     this.referenceFaceModel.UserId = this.userId;
 
     this.innovatricsService.createReferenceFaceWithoutBackground(this.referenceFaceModel).subscribe({
-      next: (response: CreateReferenceFaceWithoutBackgroundResponse) => {
+      next: (response: CreateReferenceFaceWithoutBackgroundResponse) => {        
         console.log('base64Image =>', response.base64Image)
-        // this.registerUser(response.id);
+        this.convertBase64ToImageUrl(response.base64Image);       
       },
       complete: () => {
       },
@@ -160,13 +160,33 @@ export class UserRegistrationComponent {
     })
   }
 
+  convertBase64ToImageUrl(base64Image: string) {
+    const byteCharacters = atob(base64Image);
+    const byteArrays = [];
+    const sliceSize = 110517;
+    const contentType ='image/jpeg'; 
+  
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+      const slice = byteCharacters.slice(offset, offset + sliceSize);
+  
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+      
+    const blob = new Blob(byteArrays, {type: contentType});   
+    this.imageUrl = URL.createObjectURL(blob);
+    console.log('convertBase64ToImageUrl =>',blob)    
+  }
+
   registerUser(): void {
     if (this.userRegistrationForm.invalid) {
       this.markFormGroupTouched(this.userRegistrationForm);
     }
-
     this.handleUserDetailsFormData();
-
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
         if (response.userId) {
@@ -215,11 +235,12 @@ export class UserRegistrationComponent {
     this.userModel.email = this.userRegistrationForm.get('email')?.value ?? "";
   }
 
-  handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {
-    this.imageUrl = URL.createObjectURL(imageData.image);
-    blobToBase64(this.imageUrl)
+  handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {        
+    //this.imageUrl = URL.createObjectURL(imageData.image);
+    blobToBase64(URL.createObjectURL(imageData.image))
       .then(base64String => {
         this.generatePassiveLivenessSelfie(base64String);
+        console.log(base64String)
       });
   }
 
