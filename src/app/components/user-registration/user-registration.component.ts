@@ -30,6 +30,7 @@ export class UserRegistrationComponent {
   imageUrl = '';
   customerId: string = '';
   photoImage: string = '';
+  showSpinner: boolean = false;
 
   computerSid: string | null = localStorage.getItem('computerSid');
   windowsProfileId: string = '6ABF775B-3A03-4608-946F-6127D9A510AB';
@@ -53,6 +54,7 @@ export class UserRegistrationComponent {
     userName: new FormControl(''),
     email: new FormControl(''),
   })
+  
 
   constructor(private userService: UserService, private messageService: MessageService, private formBuilder: FormBuilder,
     private innovatricsService: InnovatricsService, private alertService: AlertService) { }
@@ -239,6 +241,7 @@ export class UserRegistrationComponent {
     //this.imageUrl = URL.createObjectURL(imageData.image);
     blobToBase64(URL.createObjectURL(imageData.image))
       .then(base64String => {
+        this.showSpinner = true
         this.generatePassiveLivenessSelfie(base64String);
         console.log(base64String)
       });
@@ -250,5 +253,5 @@ export class UserRegistrationComponent {
 
   protected resetForm(): void {
     this.userRegistrationForm.reset();
-  }
+  }  
 }

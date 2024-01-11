@@ -1,7 +1,12 @@
 .result-img {
-  width: 100%;
+  width: 48%;
 }
 
-.container {
+/* .container {
   clip-path: circle(30% at 50%) !important;
-}
+} */
+
+/* .image-wrapper img {
+  width: 200px;
+  height: 150px;
+} */

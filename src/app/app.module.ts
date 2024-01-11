@@ -31,6 +31,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { AlertComponent } from './components/Alerts/alert.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 
 @NgModule({
@@ -62,6 +63,7 @@ import { AlertComponent } from './components/Alerts/alert.component';
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
+    MatProgressSpinnerModule,
     MatIconModule],
   providers: [],
   bootstrap: [AppComponent],

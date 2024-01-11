@@ -11,6 +11,7 @@ export class ResultComponent implements OnChanges {
   @Input() imageUrl!: string;
 
   imageSrc: SafeUrl = '';
+  
 
   constructor(private domSanitizer: DomSanitizer) { }
 
@@ -18,4 +19,6 @@ export class ResultComponent implements OnChanges {
     let img = this.domSanitizer.bypassSecurityTrustUrl(this.imageUrl);
     this.imageSrc = this.domSanitizer.bypassSecurityTrustUrl(this.imageUrl);
   }
+
+ 
 }
