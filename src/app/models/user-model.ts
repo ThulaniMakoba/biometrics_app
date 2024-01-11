@@ -4,5 +4,4 @@ export interface UserModel {
     userName: string;
     email: string;
     idNumber: string;
-    computerMotherSerialNumber: string ;  
 };

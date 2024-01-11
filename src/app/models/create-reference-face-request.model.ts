@@ -4,6 +4,7 @@ export class CreateReferenceFaceRequestModel {
     public Image: ImageModel = new ImageModel();
     public Detection: DetectionModel = new DetectionModel();
     public UserId: number;
+    public ComputerSerialNumber: string;
 }
 
 export class DetectionModel {

@@ -8,6 +8,7 @@ import { ProbeFaceRequest } from 'src/app/models/probe-face-request.model';
 import { ScoreResponse } from 'src/app/models/score-response.model';
 import { VerificationResponse } from 'src/app/models/verification-response.model';
 import { VerificationRequest } from 'src/app/models/verify-user-request.model';
+import { AlertService } from 'src/app/services/alert.service';
 import { InnovatricsService } from 'src/app/services/innovatrics.service';
 import { MessageService } from 'src/app/services/message.service';
 import { UserService } from 'src/app/services/user.service';
@@ -21,8 +22,12 @@ import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private userService: UserService, private router: Router,
-     private messageService: MessageService, private innovatricsService: InnovatricsService) { }
+  constructor(private userService: UserService,
+    private router: Router,
+    private messageService: MessageService,
+    private innovatricsService: InnovatricsService,
+    private alertService: AlertService
+  ) { }
 
   showCamera: boolean = false;
   showMessage: boolean = false;
@@ -36,9 +41,7 @@ export class LoginComponent implements OnInit {
   maxRetry: number = 3;
 
   userVerification: VerificationRequest = {
-    computerMotherboardSerialNumber : "6ABF775B-3A03-4608-946F-6127D9A510AB",
-    // computerSid: localStorage.getItem('computerSid') ?? "6ABF775B-3A03-4608-946F-6127D9A510AB",
-    windowsProfileId: '6ABF775B-3A03-4608-946F-6127D9A510AB'
+    computerMotherboardSerialNumber: localStorage.getItem('motherboardSerialNumber') ?? ""
   }
 
   ngOnInit(): void {
@@ -66,7 +69,7 @@ export class LoginComponent implements OnInit {
       },
       complete: () => {
       },
-      error: (error) => {
+      error: (error) => {       
         console.error('Error create customer:', error);
       }
     })
@@ -128,6 +131,7 @@ export class LoginComponent implements OnInit {
         console.log(response)
         if (response.errorMessage) {
           this.retryCount++;
+          this.alertService.error(response.errorMessage);
           alert(response.errorMessage);
           this.evaluateRetries()
           return;
@@ -138,6 +142,7 @@ export class LoginComponent implements OnInit {
       complete: () => {
       },
       error: (error) => {
+
         console.error('Error registering user:', error);
       }
     })
@@ -156,8 +161,9 @@ export class LoginComponent implements OnInit {
       });
   }
 
-
   handleError(error: Error) {
+    this.alertService.error("Face not recognised on this machine");
+    this.alertService.error(error.message);
     alert(error);
   }
 

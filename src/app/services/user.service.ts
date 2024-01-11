@@ -17,9 +17,9 @@ import { RegisterUserResponse } from '../models/register-user-response.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:5000/api/User'
+  private apiUrl = 'http://localhost:5111/api/User'
 
-  constructor(private http: HttpClient) { } 
+  constructor(private http: HttpClient) { }
 
   register(request: UserModel): Observable<RegisterUserResponse> {
     return this.http.post<RegisterUserResponse>(`${this.apiUrl}/register`, request);
@@ -30,6 +30,6 @@ export class UserService {
   }
 
   probeFaceVerification(request: ProbeFaceRequest): Observable<ScoreResponse> {
-    return this.http.post<ScoreResponse>(`${this.apiUrl}/innovatrics-probe-face`, request)
+    return this.http.post<ScoreResponse>(`${this.apiUrl}/probe-face`, request)
   }
 }

@@ -90,8 +90,8 @@
         </app-face-auto-capture>
     </div>
 
-    <div class="col-md-6">
-        <H1 [ngStyle]="{color: imageUrl ? 'black' : 'grey'}">Captured Face</H1>
+    <div class="col-md-6" *ngIf="imageUrl">
+        <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Captured Face</h1>
         <br>
         <br>
         <div *ngIf="!imageUrl && showSpinner">           

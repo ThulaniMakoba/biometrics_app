@@ -7,12 +7,11 @@ import { ComputerConfigResponse } from '../models/computer-config-response.model
   providedIn: 'root'
 })
 export class ConfigService {
-  private apiUrl = 'http://localhost:5000/api/Config'
+  private apiUrl = 'http://localhost:5111/api/Config'
 
   constructor(private http: HttpClient) { }
 
   fetchComputerSidNumber(): Observable<ComputerConfigResponse> {
     return this.http.get<ComputerConfigResponse>(`${this.apiUrl}/computer-motherboard`);
   }
-
 }

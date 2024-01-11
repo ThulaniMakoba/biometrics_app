@@ -8,6 +8,8 @@ import { ImageModel } from 'src/app/models/image.model';
 import { PassiveLivenessSelfieRequestModel } from 'src/app/models/passive-liveness-selfie-request.model';
 import { RegisterUserResponse } from 'src/app/models/register-user-response.model';
 import { UserModel } from 'src/app/models/user-model';
+import { VerificationResponse } from 'src/app/models/verification-response.model';
+import { VerificationRequest } from 'src/app/models/verify-user-request.model';
 import { AlertService } from 'src/app/services/alert.service';
 import { InnovatricsService } from 'src/app/services/innovatrics.service';
 import { MessageService } from 'src/app/services/message.service';
@@ -32,20 +34,16 @@ export class UserRegistrationComponent {
   photoImage: string = '';
   showSpinner: boolean = false;
 
-  computerSid: string | null = localStorage.getItem('computerSid');
-  windowsProfileId: string = '6ABF775B-3A03-4608-946F-6127D9A510AB';
-  computerSidExist: string | null = localStorage.getItem('computerSidExist');
-
+  motherboardSerialNumber: string | null = localStorage.getItem('motherboardSerialNumber');
+  motherboardSerialNumberExist: string | null = localStorage.getItem('motherboardSerialNumberExist');
 
   userModel: UserModel = {
     firstName: '',
     lastName: '',
     userName: '',
     email: '',
-    idNumber: '',
-    computerMotherSerialNumber: ''
+    idNumber: ''
   };
-
 
   userRegistrationForm = new FormGroup({
     idNumber: new FormControl(''),
@@ -54,12 +52,27 @@ export class UserRegistrationComponent {
     userName: new FormControl(''),
     email: new FormControl(''),
   })
-  
+
+  userVerification: VerificationRequest = {
+    computerMotherboardSerialNumber: this.motherboardSerialNumber ?? ""
+  }
+
+  referenceFaceModel: CreateReferenceFaceRequestModel = {
+    Image: new ImageModel(),
+    Detection: new DetectionModel(),
+    UserId: 0,
+    ComputerSerialNumber: ''
+  }
+
+  passiveLivenessSelfieModel: PassiveLivenessSelfieRequestModel = new PassiveLivenessSelfieRequestModel();
 
   constructor(private userService: UserService, private messageService: MessageService, private formBuilder: FormBuilder,
     private innovatricsService: InnovatricsService, private alertService: AlertService) { }
 
   ngOnInit() {
+
+    this.checkIfComputerHasUser(this.userVerification)
+
     this.userRegistrationForm = this.formBuilder.group({
       idNumber: ['', [Validators.required, this.validateIdNumber]],
       firstName: ['', Validators.required],
@@ -73,14 +86,40 @@ export class UserRegistrationComponent {
     return this.userRegistrationForm.controls;
   }
 
-  referenceFaceModel: CreateReferenceFaceRequestModel = {
-    Image: new ImageModel(),
-    Detection: new DetectionModel(),
-    UserId: 0,
+  checkIfComputerHasUser(verification: VerificationRequest) {
+    this.userService.verifyUser(verification).subscribe({
+      next: (response: VerificationResponse) => {
+        if (response.userExist)
+          this.alertService.error('Cannot register user, this computer has an existing user', false);
+      }
+    })
   }
 
-  passiveLivenessSelfieModel: PassiveLivenessSelfieRequestModel = new PassiveLivenessSelfieRequestModel();
+  registerUser(): void {
+    if (this.userRegistrationForm.invalid) {
+      this.markFormGroupTouched(this.userRegistrationForm);
+    }
 
+    if (this.userRegistrationForm.invalid)
+      return;
+
+    this.handleUserDetailsFormData();
+
+    this.userService.register(this.userModel).subscribe({
+      next: (response: RegisterUserResponse) => {
+        if (response.userId > 0) {
+          //alert(response.message)
+          this.alertService.success('User details successful saved', false);
+          this.userId = response.userId;
+          this.createCustomer();
+          return;
+        }
+      },
+      error: (error) => {
+        this.alertService.error(`Error registering user ${error} `, false)
+      }
+    })
+  }
 
   // TODO: Remove this code, use handleLiveness class to implement below code
   createCustomer(): void {
@@ -91,7 +130,7 @@ export class UserRegistrationComponent {
       complete: () => {
       },
       error: (error: any) => {
-        console.error('Error create customer:', error);
+        this.alertService.error('Innovatrics Integration error :', error);
       }
     })
   }
@@ -99,13 +138,12 @@ export class UserRegistrationComponent {
   createLiveness(customerId: string): void {
     this.innovatricsService.createLiveness(customerId).subscribe({
       next: (response: CreateCustomerResponse) => {
-        console.log('createLiveness response =>', response)
         this.customerId = customerId;
         this.showCamera = true;
         this.showRegistration = false;
       },
       error: (error: any) => {
-        console.error('Error create liveness:', error);
+        this.alertService.error('Error create liveness:', error);
       }
     })
   }
@@ -118,7 +156,7 @@ export class UserRegistrationComponent {
         this.evaluatePassiveLiveness();
       },
       error: (error: any) => {
-        console.error('Error Generating Passive Liveness Selfie:', error);
+        this.alertService.error('Error Generating Passive Liveness Selfie:', error);
       }
     })
   }
@@ -130,13 +168,13 @@ export class UserRegistrationComponent {
         //The code should be move to the back end
         if (score < 0.89) {
           //use the alert service to display the message
-          this.messageService.sendMessage("Fail Liveness")
+          this.alertService.error("Fail Liveness")
           return;
         }
         this.createReferenceFace(this.photoImage);
       },
       error: (error: any) => {
-        console.error('Error Evaluating Passive Liveness:', error);
+        this.alertService.error('Error Evaluating Passive Liveness:', error);
       }
     })
   }
@@ -148,16 +186,21 @@ export class UserRegistrationComponent {
     this.referenceFaceModel.Detection.Facesizeratio.Max = 0.5;
     this.referenceFaceModel.Detection.Facesizeratio.Min = 0.05;
     this.referenceFaceModel.UserId = this.userId;
+    this.referenceFaceModel.ComputerSerialNumber = this.motherboardSerialNumber ?? "";
 
     this.innovatricsService.createReferenceFaceWithoutBackground(this.referenceFaceModel).subscribe({
-      next: (response: CreateReferenceFaceWithoutBackgroundResponse) => {        
-        console.log('base64Image =>', response.base64Image)
-        this.convertBase64ToImageUrl(response.base64Image);       
+      next: (response: CreateReferenceFaceWithoutBackgroundResponse) => {
+        if (response.errorMessage !== null || response.errorCode !== null) {
+          this.alertService.error(response.errorMessage);
+          return;
+        } else {
+          this.convertBase64ToImageUrl(response.base64Image);
+        }
       },
       complete: () => {
       },
       error: (error: any) => {
-        console.error('Error registering user:', error);
+        this.alertService.error('Error registering user:', error);
       }
     })
   }
@@ -166,11 +209,11 @@ export class UserRegistrationComponent {
     const byteCharacters = atob(base64Image);
     const byteArrays = [];
     const sliceSize = 110517;
-    const contentType ='image/jpeg'; 
-  
+    const contentType = 'image/jpeg';
+
     for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
       const slice = byteCharacters.slice(offset, offset + sliceSize);
-  
+
       const byteNumbers = new Array(slice.length);
       for (let i = 0; i < slice.length; i++) {
         byteNumbers[i] = slice.charCodeAt(i);
@@ -178,32 +221,9 @@ export class UserRegistrationComponent {
       const byteArray = new Uint8Array(byteNumbers);
       byteArrays.push(byteArray);
     }
-      
-    const blob = new Blob(byteArrays, {type: contentType});   
-    this.imageUrl = URL.createObjectURL(blob);
-    console.log('convertBase64ToImageUrl =>',blob)    
-  }
 
-  registerUser(): void {
-    if (this.userRegistrationForm.invalid) {
-      this.markFormGroupTouched(this.userRegistrationForm);
-    }
-    this.handleUserDetailsFormData();
-    this.userService.register(this.userModel).subscribe({
-      next: (response: RegisterUserResponse) => {
-        if (response.userId) {
-          //alert(response.message)
-          this.alertService.success('Registration successful', true);
-          this.userId = response.userId;
-          this.createCustomer();
-          return;
-        }
-      },
-      error: (error) => {
-        //console.error('Error registering user:', error);
-        this.alertService.error('Error registering user', true)
-      }
-    })
+    const blob = new Blob(byteArrays, { type: contentType });
+    this.imageUrl = URL.createObjectURL(blob);
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {
@@ -229,7 +249,6 @@ export class UserRegistrationComponent {
   }
 
   handleUserDetailsFormData() {
-    this.userModel.computerMotherSerialNumber = this.computerSid ?? "";
     this.userModel.idNumber = this.userRegistrationForm.get('idNumber')?.value ?? "";
     this.userModel.firstName = this.userRegistrationForm.get('firstName')?.value ?? "";
     this.userModel.lastName = this.userRegistrationForm.get('lastName')?.value ?? "";
@@ -237,7 +256,7 @@ export class UserRegistrationComponent {
     this.userModel.email = this.userRegistrationForm.get('email')?.value ?? "";
   }
 
-  handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {        
+  handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {
     //this.imageUrl = URL.createObjectURL(imageData.image);
     blobToBase64(URL.createObjectURL(imageData.image))
       .then(base64String => {

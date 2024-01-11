@@ -21,13 +21,13 @@ export class NavigationComponent implements OnInit {
       next: (response: ComputerConfigResponse) => {
         this.motherboardSerialNumber = response.computerMotherboardSerialNumber;
         if (!response.success)
-          console.error('Error fetching computer sid number: ', response.errorMessage);
+          console.error('Error fetching motherboard serial number : ', response.errorMessage);
 
-        localStorage.setItem('computerSidExist', JSON.stringify(response.success));
-        localStorage.setItem('computerSid', response.computerMotherboardSerialNumber);
+        localStorage.setItem('motherboardSerialNumberExist', JSON.stringify(response.success));
+        localStorage.setItem('motherboardSerialNumber', response.computerMotherboardSerialNumber);
       },
       error: (error) => {
-        console.error('Error fetching computer sid number: ', error);
+        console.error('Error fetching motherboard serial number: ', error);
       }
     })
   }
