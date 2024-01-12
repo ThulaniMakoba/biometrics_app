@@ -72,7 +72,7 @@
                             Reset <i class="fas fa-times"></i>
                         </button>
                         <button type="submit" class="btn btn-success ms-auto">
-                            Register <i class="fas fa-arrow-right"></i>
+                            Capture Face <i class="fas fa-smile" style="margin-right: 5px;"></i><i class="fas fa-arrow-right"></i>
                         </button>
                     </div>
 
@@ -97,11 +97,14 @@
 
             <div class="loader-container">
                 <div class="loader"></div>
+                <p>Please wait...</p>
             </div>
         </div>
+        
         <div *ngIf="!imageUrl && !showSpinner">
-            <img src="assets/placeholder_face.png" alt="image">
+            <img src="assets/placeholder_face2.jpg" alt="image" class="small-image">
         </div>
+        
         <div *ngIf="imageUrl">
             <app-result [imageUrl]="imageUrl"></app-result>
         </div>

@@ -11,7 +11,7 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Adjust this value based on your layout needs */
+    height: 50vh;
 }
 
 .loader {
@@ -28,4 +28,8 @@ button {
     100% { transform: rotate(360deg); }
 }
 
+.small-image {
+  width: 300px; 
+  height: auto; 
+}
   
