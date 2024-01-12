@@ -127,15 +127,6 @@ export class LoginComponent implements OnInit {
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: ScoreResponse) => {
         this.authService.login(response)
-        console.log(response)
-        // if (response.errorMessage) {
-        //   this.retryCount++;
-        //   this.alertService.error("Authentication failed: Face didn't match");
-        //   this.evaluateRetries()
-        //   return;
-        // }
-
-        this.router.navigate(['/home', { score: response.score }])
       },
       complete: () => {
       },
@@ -155,6 +146,7 @@ export class LoginComponent implements OnInit {
     this.imageUrl = URL.createObjectURL(imageData.image);
     blobToBase64(this.imageUrl)
       .then(base64String => {
+        this.alertService.clear()
         this.generatePassiveLivenessSelfie(base64String);
       });
   }

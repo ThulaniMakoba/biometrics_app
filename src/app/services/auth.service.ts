@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AlertService } from './alert.service';
 import { ScoreResponse } from '../models/score-response.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -10,13 +11,14 @@ export class AuthService {
   retryCount: number = 0;
   maxRetry: number = 3;
 
-  constructor(private alertService: AlertService) { }
+  constructor(private alertService: AlertService, private router: Router) { }
 
   login(authenticate: ScoreResponse) {
 
     if (authenticate.isSuccess) {
       this.session = { isAuthenticated: true };
       this.alertService.success('Login Successful');
+      this.router.navigate(['/home'])
     }
     else {
       this.retryCount++;
