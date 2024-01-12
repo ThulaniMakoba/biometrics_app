@@ -1,16 +1,14 @@
-import { Component, OnChanges, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CreateCustomerResponse } from 'src/app/models/create-customer-response.model';
-import { CreateReferenceFaceRequestModel, DetectionModel } from 'src/app/models/create-reference-face-request.model';
-import { CreateReferenceFaceResponse } from 'src/app/models/create-reference-face-response.model';
 import { PassiveLivenessSelfieRequestModel } from 'src/app/models/passive-liveness-selfie-request.model';
 import { ProbeFaceRequest } from 'src/app/models/probe-face-request.model';
 import { ScoreResponse } from 'src/app/models/score-response.model';
 import { VerificationResponse } from 'src/app/models/verification-response.model';
 import { VerificationRequest } from 'src/app/models/verify-user-request.model';
 import { AlertService } from 'src/app/services/alert.service';
+import { AuthService } from 'src/app/services/auth.service';
 import { InnovatricsService } from 'src/app/services/innovatrics.service';
-import { MessageService } from 'src/app/services/message.service';
 import { UserService } from 'src/app/services/user.service';
 import { OnPhotoTakenEventValue } from 'src/app/types';
 import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
@@ -24,7 +22,7 @@ export class LoginComponent implements OnInit {
 
   constructor(private userService: UserService,
     private router: Router,
-    private messageService: MessageService,
+    private authService: AuthService,
     private innovatricsService: InnovatricsService,
     private alertService: AlertService
   ) { }
@@ -69,7 +67,7 @@ export class LoginComponent implements OnInit {
       },
       complete: () => {
       },
-      error: (error) => {       
+      error: (error) => {
         console.error('Error create customer:', error);
       }
     })
@@ -102,13 +100,13 @@ export class LoginComponent implements OnInit {
 
   evaluatePassiveLiveness() {
     this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
-      next: (response) => {
+      next: (response: ScoreResponse) => {
         const score: number = +response.score;
 
         if (score < 0.89) {
           this.retryCount++;
           this.evaluateRetries()
-          this.messageService.setMessage("Fail Liveness")
+          this.alertService.error("Failed Liveness. Please try again.")
           return;
         }
         this.probeFaceVerification(this.photoImage);
@@ -128,14 +126,14 @@ export class LoginComponent implements OnInit {
 
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: ScoreResponse) => {
+        this.authService.login(response)
         console.log(response)
-        if (response.errorMessage) {
-          this.retryCount++;
-          this.alertService.error(response.errorMessage);
-          alert(response.errorMessage);
-          this.evaluateRetries()
-          return;
-        }
+        // if (response.errorMessage) {
+        //   this.retryCount++;
+        //   this.alertService.error("Authentication failed: Face didn't match");
+        //   this.evaluateRetries()
+        //   return;
+        // }
 
         this.router.navigate(['/home', { score: response.score }])
       },

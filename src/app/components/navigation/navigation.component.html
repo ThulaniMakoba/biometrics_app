@@ -6,7 +6,8 @@
   <div class="links">
     <a routerLink="/home">Home</a>
     <a routerLink="/registration">Registration</a>
-    <a routerLink="/login">Authenticate</a>
+    <a routerLink="/login" *ngIf="!authService.session">Authenticate</a>
+    <a routerLink="#" (click)="authService.logout()" *ngIf="authService.session">Logout</a>
   </div>
 
 </nav>

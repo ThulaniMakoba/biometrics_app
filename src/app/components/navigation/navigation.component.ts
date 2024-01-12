@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ComputerConfigResponse } from 'src/app/models/computer-config-response.model';
+import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
 
 @Component({
@@ -14,7 +15,7 @@ export class NavigationComponent implements OnInit {
     this.fetchComputerSidNumber();
   }
 
-  constructor(private config: ConfigService) { }
+  constructor(private config: ConfigService, public authService: AuthService) { }
 
   fetchComputerSidNumber(): void {
     this.config.fetchComputerSidNumber().subscribe({
