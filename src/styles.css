@@ -5,15 +5,12 @@
   color: #404354;
   text-align: center;
 }
+
 .container {
   max-width: 50rem;
   margin: 1rem auto;
   position: relative;
   overflow: hidden;
-  /* width: 40px;
-  height: 300px; */
-
-  /*clip-path: circle(20% at 50%);*/
 }
 
 .button {
@@ -32,13 +29,21 @@
   font-weight: 600;
   font-size: 1rem;
   margin: 0 0.5rem 1rem 0.5rem;
-  
+
 }
+
 .button[disabled] {
   background-color: lightgrey;
   color: gray;
   cursor: not-allowed;
 }
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
