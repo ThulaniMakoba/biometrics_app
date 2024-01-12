@@ -1,7 +1,9 @@
 <div *ngIf="showCamera">
     <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
     </app-face-auto-capture>
-    <app-result *ngIf="imageUrl" [imageUrl]="imageUrl"></app-result>
+
+    <!-- Uncomment if you want to show the captured face on login -->
+    <!-- <app-result *ngIf="imageUrl" [imageUrl]="imageUrl"></app-result> -->
 </div>
 <div *ngIf="showMessage">
     The user is not found
