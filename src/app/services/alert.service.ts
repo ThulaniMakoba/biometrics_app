@@ -24,7 +24,6 @@ export class AlertService {
     }
 
     getAlert(): Observable<any> {
-        console.log("Get ALert Alert Service")
         return this.subject.asObservable();
     }
 
@@ -34,7 +33,6 @@ export class AlertService {
     }
 
     error(message: string, keepAfterRouteChange = false) {
-        console.log("Error Alert Service")
         this.keepAfterRouteChange = keepAfterRouteChange;
         this.subject.next({ type: 'error', text: message });
     }
