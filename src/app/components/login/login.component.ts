@@ -4,6 +4,7 @@ import { CreateCustomerResponse } from 'src/app/models/create-customer-response.
 import { PassiveLivenessSelfieRequestModel } from 'src/app/models/passive-liveness-selfie-request.model';
 import { ProbeFaceRequest } from 'src/app/models/probe-face-request.model';
 import { ScoreResponse } from 'src/app/models/score-response.model';
+import { UserModel } from 'src/app/models/user-model';
 import { VerificationResponse } from 'src/app/models/verification-response.model';
 import { VerificationRequest } from 'src/app/models/verify-user-request.model';
 import { AlertService } from 'src/app/services/alert.service';
@@ -21,7 +22,6 @@ import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
 export class LoginComponent implements OnInit {
 
   constructor(private userService: UserService,
-    private router: Router,
     private authService: AuthService,
     private innovatricsService: InnovatricsService,
     private alertService: AlertService
@@ -125,13 +125,12 @@ export class LoginComponent implements OnInit {
     this.probeFaceRequest.referenceFaceId = this.referenceFaceId;
 
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
-      next: (response: ScoreResponse) => {
+      next: (response: UserModel) => {
         this.authService.login(response)
       },
       complete: () => {
       },
       error: (error) => {
-
         console.error('Error registering user:', error);
       }
     })
