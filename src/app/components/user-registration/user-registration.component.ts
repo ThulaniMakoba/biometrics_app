@@ -208,7 +208,7 @@ export class UserRegistrationComponent {
           return;
         } else {
           this.convertBase64ToImageUrl(response.base64Image);
-          this.alertService.success("Successful Registered")
+          this.alertService.success("Face Registered Successful ")
         }
       },
       complete: () => {

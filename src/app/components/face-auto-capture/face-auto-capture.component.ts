@@ -19,6 +19,7 @@ export class FaceAutoCaptureComponent implements OnInit {
   @Output() onBack = new EventEmitter<Step>();
 
   isButtonDisabled = true;
+  isBackButtonDisabled = true;
 
   constructor() { }
 
@@ -34,11 +35,13 @@ export class FaceAutoCaptureComponent implements OnInit {
       ControlEventInstruction.CONTINUE_DETECTION
     );
     this.isButtonDisabled = true;
+    this.isBackButtonDisabled = true;
   }
 
   handlePhotoTaken({ imageData, content }: OnPhotoTakenEventValue<FaceComponentData>) {
     this.onPhotoTaken.emit({ imageData, content });
     this.isButtonDisabled = false;
+    this.isBackButtonDisabled = true;
   }
 
   handleError(error: Error) {

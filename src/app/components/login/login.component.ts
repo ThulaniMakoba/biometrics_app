@@ -37,6 +37,7 @@ export class LoginComponent implements OnInit {
   photoImage: string = '';
   retryCount: number = 0;
   maxRetry: number = 3;
+  isButtonDisabled = false;
 
   userVerification: VerificationRequest = {
     computerMotherboardSerialNumber: localStorage.getItem('motherboardSerialNumber') ?? ""
@@ -148,6 +149,7 @@ export class LoginComponent implements OnInit {
         this.alertService.clear()
         this.generatePassiveLivenessSelfie(base64String);
       });
+      this.isButtonDisabled = true;
   }
 
   handleError(error: Error) {
