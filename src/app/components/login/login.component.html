@@ -1,10 +1,15 @@
+<div *ngIf="loadingService.isLoading$() | async" class="overlay">
+    <div class="spinner-container">
+        <mat-progress-bar mode="indeterminate" value="accent"></mat-progress-bar>
+    </div>
+</div>
 <div *ngIf="showCamera">
+
+
     <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
     </app-face-auto-capture>
-
-    <!-- Uncomment if you want to show the captured face on login -->
-    <!-- <app-result *ngIf="imageUrl" [imageUrl]="imageUrl"></app-result> -->
 </div>
+
 <div *ngIf="showMessage">
     The user is not found
 </div>
