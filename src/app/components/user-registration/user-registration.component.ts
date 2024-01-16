@@ -6,7 +6,10 @@ import { CreateReferenceFaceResponse } from 'src/app/models/create-reference-fac
 import { CreateReferenceFaceWithoutBackgroundResponse } from 'src/app/models/create-reference-face-without-background-response.model';
 import { ImageModel } from 'src/app/models/image.model';
 import { PassiveLivenessSelfieRequestModel } from 'src/app/models/passive-liveness-selfie-request.model';
+import { RegisterFaceRequestResponse } from 'src/app/models/register-face-request-response.model';
+import { RegisterFaceRequest } from 'src/app/models/register-face-request.model';
 import { RegisterUserResponse } from 'src/app/models/register-user-response.model';
+import { ScoreResponse } from 'src/app/models/score-response.model';
 import { UserModel } from 'src/app/models/user-model';
 import { VerificationResponse } from 'src/app/models/verification-response.model';
 import { VerificationRequest } from 'src/app/models/verify-user-request.model';
@@ -66,6 +69,14 @@ export class UserRegistrationComponent {
   }
 
   passiveLivenessSelfieModel: PassiveLivenessSelfieRequestModel = new PassiveLivenessSelfieRequestModel();
+
+  registerFaceModel: RegisterFaceRequest = {
+    customerId: '',
+    image: new ImageModel,
+    detection: new DetectionModel,
+    userId: 0,
+    computerSerialNumber: '',
+  }
 
   constructor(private userService: UserService, private messageService: MessageService, private formBuilder: FormBuilder,
     private innovatricsService: InnovatricsService, private alertService: AlertService) { }
@@ -175,11 +186,8 @@ export class UserRegistrationComponent {
 
   evaluatePassiveLiveness() {
     this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
-      next: (response: { score: string | number; }) => {
-        const score: number = +response.score;
-        //The code should be move to the back end
-        if (score < 0.89) {
-          //use the alert service to display the message
+      next: (response: ScoreResponse) => {
+        if (!response.isSuccess) {
           this.alertService.error("Fail Liveness")
           return;
         }
@@ -189,6 +197,35 @@ export class UserRegistrationComponent {
         this.alertService.error('Error Evaluating Passive Liveness:', error);
       }
     })
+  }
+
+  registerFace(image: unknown) {
+    this.registerFaceModel.image.Data = jpegBase64ToStringBase64(image);
+    this.registerFaceModel.detection.Facesizeratio.Max = 0.5;
+    this.registerFaceModel.detection.Facesizeratio.Min = 0.05;
+    this.registerFaceModel.detection.Mode = 'STRICT';
+    this.registerFaceModel.userId = this.userId;
+    this.registerFaceModel.computerSerialNumber = this.motherboardSerialNumber ?? "";
+    this.registerFaceModel.customerId = this.customerId ?? "";
+
+    this.userService.registerFace(this.registerFaceModel).subscribe({
+      next: (response: RegisterFaceRequestResponse) => {
+        if (response.errorMessage !== null || response.errorCode !== null) {
+          this.alertService.error(`${response.errorMessage}, Please try again`,);
+          this.showSpinner = false;
+          return;
+        } else {
+          this.convertBase64ToImageUrl(response.base64Image);
+          this.alertService.success("Face Registered Successful ")
+        }
+      },
+      complete: () => {
+      },
+      error: (error: any) => {
+        this.alertService.error('Error registering user:', error);
+      }
+    })
+
   }
 
   createReferenceFace(image: string) {
@@ -276,7 +313,8 @@ export class UserRegistrationComponent {
       .then(base64String => {
         this.showSpinner = true;
         this.imageUrl = '';
-        this.generatePassiveLivenessSelfie(base64String);
+        this.registerFace(base64String);
+        // this.generatePassiveLivenessSelfie(base64String);
         this.alertService.clear();
       });
   }
