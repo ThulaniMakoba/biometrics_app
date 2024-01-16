@@ -34,6 +34,7 @@ export class UserRegistrationComponent {
   photoImage: string = '';
   showSpinner: boolean = false;
   hideActionButtons: boolean = false;
+  progressMessage: string = '';
 
   motherboardSerialNumber: string | null = localStorage.getItem('motherboardSerialNumber');
   motherboardSerialNumberExist: string | null = localStorage.getItem('motherboardSerialNumberExist');
@@ -107,12 +108,9 @@ export class UserRegistrationComponent {
     if (this.userRegistrationForm.invalid) {
       this.markFormGroupTouched(this.userRegistrationForm);
     }
-
     if (this.userRegistrationForm.invalid)
       return;
-
     this.handleUserDetailsFormData();
-
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
         if (response.userId > 0) {
@@ -159,9 +157,11 @@ export class UserRegistrationComponent {
   generatePassiveLivenessSelfie(image: unknown) {
     this.photoImage = jpegBase64ToStringBase64(image);
     this.passiveLivenessSelfieModel.image.Data = this.photoImage;
+    this.progressMessage = 'Generate Passive Liveness Selfie...'
     this.innovatricsService.generatePassiveLivenessSelfie(this.customerId, this.passiveLivenessSelfieModel).subscribe({
       next: (_: any) => {
         this.evaluatePassiveLiveness();
+        
       },
       error: (error: any) => {
         this.alertService.error('Error Generating Passive Liveness Selfie:', error);
@@ -170,6 +170,7 @@ export class UserRegistrationComponent {
   }
 
   evaluatePassiveLiveness() {
+    this.progressMessage = 'Evaluate Passive Liveness...'
     this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
       next: (response: { score: string | number; }) => {
         const score: number = +response.score;
@@ -196,6 +197,7 @@ export class UserRegistrationComponent {
     this.referenceFaceModel.UserId = this.userId;
     this.referenceFaceModel.ComputerSerialNumber = this.motherboardSerialNumber ?? "";
 
+    this.progressMessage = 'Create Reference Face...'
     this.innovatricsService.createReferenceFaceWithoutBackground(this.referenceFaceModel).subscribe({
       next: (response: CreateReferenceFaceWithoutBackgroundResponse) => {
         if (response.errorMessage !== null || response.errorCode !== null) {
@@ -205,7 +207,9 @@ export class UserRegistrationComponent {
         } else {
           this.convertBase64ToImageUrl(response.base64Image);
           this.alertService.success("Face Registered Successful ")
+          this.progressMessage = '';
         }
+
       },
       complete: () => {
       },

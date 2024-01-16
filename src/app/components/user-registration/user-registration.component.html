@@ -1,4 +1,5 @@
 <br><br>
+
 <div class="row" *ngIf="showRegistration">
     <div class="col-md-6 mx-auto">
         <div class="card">
@@ -85,10 +86,9 @@
         <div *ngIf="!imageUrl && showSpinner">
             <!-- <mat-progress-spinner mode="indeterminate"></mat-progress-spinner> -->
             <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Capturing Face </h1>
-
+            <div>{{ progressMessage }}</div>
             <div class="loader-container">
                 <div class="loader"></div>
-
             </div>
         </div>
 
@@ -101,6 +101,5 @@
             <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Captured Face</h1>
             <app-result [imageUrl]="imageUrl"></app-result>
         </div>
-
     </div>
 </div>
