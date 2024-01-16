@@ -10,6 +10,7 @@ import { VerificationRequest } from 'src/app/models/verify-user-request.model';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { InnovatricsService } from 'src/app/services/innovatrics.service';
+import { LoadingService } from 'src/app/services/loading.service';
 import { UserService } from 'src/app/services/user.service';
 import { OnPhotoTakenEventValue } from 'src/app/types';
 import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
@@ -20,12 +21,6 @@ import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-
-  constructor(private userService: UserService,
-    private authService: AuthService,
-    private innovatricsService: InnovatricsService,
-    private alertService: AlertService
-  ) { }
 
   showCamera: boolean = false;
   showMessage: boolean = false;
@@ -43,7 +38,16 @@ export class LoginComponent implements OnInit {
     computerMotherboardSerialNumber: localStorage.getItem('motherboardSerialNumber') ?? ""
   }
 
+
+  constructor(private userService: UserService,
+    private authService: AuthService,
+    private innovatricsService: InnovatricsService,
+    private alertService: AlertService,
+    public loadingService: LoadingService
+  ) { }
+
   ngOnInit(): void {
+    this.loadingService.showLoading();
     this.verifyUser(this.userVerification)
   }
 
@@ -54,8 +58,11 @@ export class LoginComponent implements OnInit {
           this.referenceFaceId = response.referenceFaceId;
           this.createCustomer();
         }
-        else
+        else{
+          this.loadingService.hideLoading();
           this.showMessage = true;
+        }
+       
       }
     })
   }
@@ -79,8 +86,10 @@ export class LoginComponent implements OnInit {
       next: (response: CreateCustomerResponse) => {
         this.showCamera = true;
         this.customerId = customerId;
+        this.loadingService.hideLoading();
       },
       error: (error) => {
+        this.loadingService.hideLoading();
         console.error('Error create liveness:', error);
       }
     })
@@ -124,14 +133,17 @@ export class LoginComponent implements OnInit {
     this.probeFaceRequest.Detection.Facesizeratio.Max = 0.5;
     this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
     this.probeFaceRequest.referenceFaceId = this.referenceFaceId;
+    this.loadingService.showLoading();
 
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: UserModel) => {
+         this.loadingService.hideLoading();
         this.authService.login(response)
       },
       complete: () => {
       },
       error: (error) => {
+        this.loadingService.hideLoading();
         console.error('Error registering user:', error);
       }
     })
@@ -149,7 +161,7 @@ export class LoginComponent implements OnInit {
         this.alertService.clear()
         this.generatePassiveLivenessSelfie(base64String);
       });
-      this.isButtonDisabled = true;
+    this.isButtonDisabled = true;
   }
 
   handleError(error: Error) {

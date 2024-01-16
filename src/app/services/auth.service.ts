@@ -21,7 +21,7 @@ export class AuthService {
 
   login(userDetails: UserModel) {
 
-    if (userDetails) {
+    if (userDetails.isSuccess) {
       this.session = { isAuthenticated: true };
       this.alertService.error("Login Successfully");
       this.messageService.sendUserDetails(userDetails);
