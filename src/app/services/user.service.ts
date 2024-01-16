@@ -7,17 +7,23 @@ import { VerificationResponse } from '../models/verification-response.model';
 import { ProbeFaceRequest } from '../models/probe-face-request.model';
 
 import { RegisterUserResponse } from '../models/register-user-response.model';
+import { RegisterFaceRequest } from '../models/register-face-request.model';
+import { RegisterFaceRequestResponse } from '../models/register-face-request-response.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:5000/api/User'
+  private apiUrl = 'http://localhost:5111/api/User'
 
   constructor(private http: HttpClient) { }
 
   register(request: UserModel): Observable<RegisterUserResponse> {
     return this.http.post<RegisterUserResponse>(`${this.apiUrl}/register`, request);
+  }
+
+  registerFace(request: RegisterFaceRequest): Observable<RegisterFaceRequestResponse> {
+    return this.http.post<RegisterFaceRequestResponse>(`${this.apiUrl}/register-face`, request);
   }
 
   verifyUser(request: VerificationRequest): Observable<VerificationResponse> {
