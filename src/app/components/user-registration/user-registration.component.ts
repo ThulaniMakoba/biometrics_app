@@ -43,13 +43,14 @@ export class UserRegistrationComponent {
     firstName: '',
     lastName: '',
     email: '',
-    idNumber: ''
+    idNumber: '',
+    isSuccess: false,
   };
 
   userRegistrationForm = new FormGroup({
     idNumber: new FormControl(''),
     firstName: new FormControl(''),
-    lastName: new FormControl(''),  
+    lastName: new FormControl(''),
     email: new FormControl(''),
   })
 
@@ -76,7 +77,7 @@ export class UserRegistrationComponent {
     this.userRegistrationForm = this.formBuilder.group({
       idNumber: ['', [Validators.required, this.validateIdNumber]],
       firstName: ['', Validators.required],
-      lastName: ['', Validators.required],    
+      lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
 
     });
@@ -100,7 +101,7 @@ export class UserRegistrationComponent {
   disableFormFields() {
     this.userRegistrationForm.controls['idNumber'].disable();
     this.userRegistrationForm.controls['firstName'].disable();
-    this.userRegistrationForm.controls['lastName'].disable();   
+    this.userRegistrationForm.controls['lastName'].disable();
     this.userRegistrationForm.controls['email'].disable();
   }
 

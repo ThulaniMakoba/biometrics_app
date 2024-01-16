@@ -3,4 +3,5 @@ export interface UserModel {
     lastName: string;   
     email: string;
     idNumber: string;
+    isSuccess:boolean;
 };
