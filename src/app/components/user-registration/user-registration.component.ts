@@ -197,7 +197,7 @@ export class UserRegistrationComponent {
     this.referenceFaceModel.UserId = this.userId;
     this.referenceFaceModel.ComputerSerialNumber = this.motherboardSerialNumber ?? "";
 
-    this.progressMessage = 'Create Reference Face...'
+    this.progressMessage = 'Preparing Captured Face...'
     this.innovatricsService.createReferenceFaceWithoutBackground(this.referenceFaceModel).subscribe({
       next: (response: CreateReferenceFaceWithoutBackgroundResponse) => {
         if (response.errorMessage !== null || response.errorCode !== null) {

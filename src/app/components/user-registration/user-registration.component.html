@@ -86,9 +86,18 @@
         <div *ngIf="!imageUrl && showSpinner">
             <!-- <mat-progress-spinner mode="indeterminate"></mat-progress-spinner> -->
             <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Capturing Face </h1>
-            <div>{{ progressMessage }}</div>
-            <div class="loader-container">
-                <div class="loader"></div>
+            <div style="color: #3498db;">{{ progressMessage }}</div>
+            <div class="spinner-container">
+                <div class="spinner">
+                  <div class="spinner-text three-dots"></div>
+                  <div class="spinner-sector spinner-sector-red"></div>
+                  <div class="spinner-sector spinner-sector-blue"></div>
+                  <div class="spinner-sector spinner-sector-green"></div>
+                </div>
+              </div>
+
+            <div>
+                <img src="assets/placeholder_face2.jpg" alt="image" class="small-image">
             </div>
         </div>
 
@@ -103,3 +112,5 @@
         </div>
     </div>
 </div>
+
+

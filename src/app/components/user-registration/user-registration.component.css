@@ -1,35 +1,111 @@
 button {
-    margin-right: 10px;
+  margin-right: 10px;
+}
+
+.required:after { 
+  content: " *"; color: red; 
+}
+
+
+.spinner-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 69vh;
+ /*  background-color: rgba(0, 0, 0, 0.4); */
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0.2;
   }
-
-  .required:after { 
-    content: " *"; color: red; 
+  20% {
+    opacity: 1;
   }
-
-
-  .loader-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50vh;
+  100% {
+    opacity: 0.2;
+  }
 }
 
-.loader {
-    border: 16px solid #f3f3f3; /* Light grey */
-    border-top: 16px solid #3498db; /* Blue */
-    border-radius: 50%;
-    width: 120px;
-    height: 120px;
-    animation: spin 1s linear infinite;
+.three-dots span {
+  animation-name: blink;
+  animation-duration: 1.4s;
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.three-dots span:nth-child(2) {
+  animation-delay: 0.2s;
 }
 
+.three-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.spinner {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+  height: 60px;
+}
+
+.spinner-sector {
+  border-radius: 50%;
+  position: absolute;
+  width: 70%;
+  height: 70%;
+  border: 10px solid transparent;
+}
+
+.spinner-text {
+  font-size: 2em;
+}
+
+.spinner-sector-blue {
+  animation: rotate 2s ease-out infinite;
+  border-top: 10px solid lightblue;
+}
+
+.spinner-sector-red {
+  animation: rotate 2.5s ease-in infinite;
+  border-top: 10px solid lightcoral;
+}
+
+.spinner-sector-green {
+  animation: rotate 1.5s ease-in-out infinite;
+  border-top: 10px solid lightgreen;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loading-opacity {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  25%,
+  75% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.1;
+  }
+}
 .small-image {
-  width: 300px; 
-  height: auto; 
+width: 300px; 
+height: auto; 
 }
-  
