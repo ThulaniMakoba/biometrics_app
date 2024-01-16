@@ -57,22 +57,13 @@
                         </span>
                     </div>
 
-
-                    <div class="mb-3">
-                        <label for="userName" class="required">Username</label>
-                        <input type="text" formControlName="userName" class="form-control"
-                            [ngClass]="{ 'is-invalid': submitted && f.userName.errors }"
-                            placeholder="Enter your Username " />
-                        <span class="text-danger" *ngIf="(f.userName.touched || submitted) &&
-                            f.userName.errors?.['required']">UserName is required
-                        </span>
-                    </div>
                     <div *ngIf="!hideActionButtons" class="d-flex justify-content-between">
                         <button type="reset" class="btn btn-danger">
                             Reset <i class="fas fa-times"></i>
                         </button>
                         <button type="submit" class="btn btn-success ms-auto">
-                            Capture Face <i class="fas fa-smile" style="margin-right: 5px;"></i><i class="fas fa-arrow-right"></i>
+                            Capture Face <i class="fas fa-smile" style="margin-right: 5px;"></i><i
+                                class="fas fa-arrow-right"></i>
                         </button>
                     </div>
 
@@ -88,7 +79,7 @@
         </app-face-auto-capture>
     </div>
 
-    <div class="col-md-6">       
+    <div class="col-md-6">
         <br>
         <br>
         <div *ngIf="!imageUrl && showSpinner">
@@ -97,15 +88,15 @@
 
             <div class="loader-container">
                 <div class="loader"></div>
-                
+
             </div>
         </div>
-        
-        <div *ngIf="!imageUrl && !showSpinner">  
-            <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Awaiting Face Capture</h1>          
+
+        <div *ngIf="!imageUrl && !showSpinner">
+            <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Awaiting Face Capture</h1>
             <img src="assets/placeholder_face2.jpg" alt="image" class="small-image">
         </div>
-        
+
         <div *ngIf="imageUrl">
             <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Captured Face</h1>
             <app-result [imageUrl]="imageUrl"></app-result>

@@ -41,7 +41,6 @@ export class UserRegistrationComponent {
   userModel: UserModel = {
     firstName: '',
     lastName: '',
-    userName: '',
     email: '',
     idNumber: ''
   };
@@ -49,8 +48,7 @@ export class UserRegistrationComponent {
   userRegistrationForm = new FormGroup({
     idNumber: new FormControl(''),
     firstName: new FormControl(''),
-    lastName: new FormControl(''),
-    userName: new FormControl(''),
+    lastName: new FormControl(''),  
     email: new FormControl(''),
   })
 
@@ -77,8 +75,7 @@ export class UserRegistrationComponent {
     this.userRegistrationForm = this.formBuilder.group({
       idNumber: ['', [Validators.required, this.validateIdNumber]],
       firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      userName: ['', [Validators.required, Validators.minLength(3)]],
+      lastName: ['', Validators.required],    
       email: ['', [Validators.required, Validators.email]],
 
     });
@@ -102,8 +99,7 @@ export class UserRegistrationComponent {
   disableFormFields() {
     this.userRegistrationForm.controls['idNumber'].disable();
     this.userRegistrationForm.controls['firstName'].disable();
-    this.userRegistrationForm.controls['lastName'].disable();
-    this.userRegistrationForm.controls['userName'].disable();
+    this.userRegistrationForm.controls['lastName'].disable();   
     this.userRegistrationForm.controls['email'].disable();
   }
 
@@ -267,7 +263,6 @@ export class UserRegistrationComponent {
     this.userModel.idNumber = this.userRegistrationForm.get('idNumber')?.value ?? "";
     this.userModel.firstName = this.userRegistrationForm.get('firstName')?.value ?? "";
     this.userModel.lastName = this.userRegistrationForm.get('lastName')?.value ?? "";
-    this.userModel.userName = this.userRegistrationForm.get('userName')?.value ?? "";
     this.userModel.email = this.userRegistrationForm.get('email')?.value ?? "";
   }
 
