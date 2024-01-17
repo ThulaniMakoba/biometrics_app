@@ -116,7 +116,7 @@ export class UserRegistrationComponent {
       next: (response: RegisterUserResponse) => {
         if (response.userId > 0) {
           //alert(response.message)
-          this.alertService.success('User details successful saved', false);
+          this.alertService.success('User details successfully saved', false);
           this.userId = response.userId;
           this.createCustomer();
           return;
@@ -207,7 +207,7 @@ export class UserRegistrationComponent {
           return;
         } else {
           this.convertBase64ToImageUrl(response.base64Image);
-          this.alertService.success("Face Registered Successful ")
+          this.alertService.success("Face Registered Successfully ")
           this.progressMessage = '';
         }
 
