@@ -25,6 +25,7 @@ export class AuthService {
       this.session = { isAuthenticated: true };
       this.alertService.error("Login Successfully");
       this.messageService.sendUserDetails(userDetails);
+      this.clearMessage(10000);
       this.router.navigate(['/home'])
     }
     else {
@@ -39,7 +40,15 @@ export class AuthService {
     this.session = null;
     this.alertService.success("Logout Successful");
     this.messageService.clearUserDetails();
+    this.clearMessage(5000);
   }
+
+  clearMessage(time: number) {
+    setTimeout(() => {
+      this.alertService.clear();
+    }, time);
+  }
+
 
   evaluateRetries() {
     if (this.retryCount === this.maxRetry)
