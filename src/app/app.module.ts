@@ -34,7 +34,6 @@ import { AlertComponent } from './components/Alerts/alert.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,7 +65,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     MatButtonModule,
     MatProgressSpinnerModule,
     MatIconModule,
-    MatProgressBarModule],
+    MatProgressBarModule
+  ],
   providers: [],
   bootstrap: [AppComponent],
 })
