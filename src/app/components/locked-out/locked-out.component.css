@@ -1,0 +1,19 @@
+.locked-out-container {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  h2 {
+    color: #d9534f; /* Bootstrap's danger color */
+  }
+  
+  p {
+    margin-bottom: 15px;
+  }
+  

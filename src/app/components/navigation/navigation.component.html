@@ -4,10 +4,11 @@
     <!-- <span class="title">eDNA Lite</span> -->
   </div>
   <div class="links">
-    <a routerLink="/home">Home</a>
-    <a routerLink="/registration">Registration</a>
-    <a routerLink="/login" *ngIf="!authService.session">Authenticate</a>
-    <a routerLink="#" (click)="authService.logout()" *ngIf="authService.session">Logout</a>
+    <a routerLink="/home" *ngIf="!authService.isAccountLocked">Home</a>
+    <a routerLink="/registration" *ngIf="!authService.isAccountLocked">Registration</a>
+    <a routerLink="/login" *ngIf="(!authService.session && !authService.isAccountLocked)">Authenticate</a>
+    <a routerLink="#" (click)="authService.logout()"
+      *ngIf="(authService.session&& !authService.isAccountLocked)">Logout</a>
   </div>
 
 </nav>

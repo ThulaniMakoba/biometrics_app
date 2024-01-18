@@ -33,6 +33,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AlertComponent } from './components/Alerts/alert.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { LockedOutComponent } from './components/locked-out/locked-out.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +57,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
     LoginComponent,
     NavigationComponent,
     HomeComponent,
-    SuccessErrorComponent
+    SuccessErrorComponent,
+    LockedOutComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [BrowserModule, HttpClientModule, FormsModule, AppRoutingModule, BrowserAnimationsModule, ReactiveFormsModule,

@@ -12,6 +12,7 @@ export class AuthService {
   session: any = null;
   retryCount: number = 0;
   maxRetry: number = 3;
+  isAccountLocked: boolean = false
 
   constructor(
     private alertService: AlertService,
@@ -30,7 +31,7 @@ export class AuthService {
     }
     else {
       this.retryCount++;
-      this.alertService.error("Authentication failed: Face didn't match");
+      this.alertService.error(`Authentication failed: Face didn't match. Left with ${this.maxRetry - this.retryCount} attempts!`);
       this.evaluateRetries()
       return;
     }
@@ -51,9 +52,10 @@ export class AuthService {
 
 
   evaluateRetries() {
-    if (this.retryCount === this.maxRetry)
-      return;
-    // this.showCamera = false;
+    if (this.retryCount === this.maxRetry) {
+      this.isAccountLocked = true;
+      this.router.navigate(['/locked-out'])
+    }
   }
 
 }
