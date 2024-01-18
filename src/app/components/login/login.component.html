@@ -3,11 +3,17 @@
         <mat-progress-bar mode="indeterminate" value="accent"></mat-progress-bar>
     </div>
 </div>
+<br>
+
 <div *ngIf="showCamera">
+    <div *ngIf="imageUrl" class="spinner-wrapper">
+        <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}"></h1>  
+    </div>
 
-
-    <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
-    </app-face-auto-capture>
+    <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)" 
+    [isLogin]="isLogin"
+     [progressMessage] ="progressMessage">
+    </app-face-auto-capture>   
 </div>
 
 <div *ngIf="showMessage">

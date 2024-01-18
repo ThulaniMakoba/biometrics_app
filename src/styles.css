@@ -48,3 +48,8 @@ body {
   margin: 0;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+.small-gif {
+  width: 40px; 
+  height: auto; 
+  
+  }

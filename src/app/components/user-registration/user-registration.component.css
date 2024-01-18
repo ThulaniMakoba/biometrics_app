@@ -52,16 +52,16 @@ button {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100px;
-  height: 100px;
+  width: 10px; /* Adjust the size as needed */
+  height: 10px; /* Adjust the size as needed */
 }
 
 .spinner-sector {
   border-radius: 50%;
   position: absolute;
-  width: 70%;
-  height: 70%;
-  border: 10px solid transparent;
+  width: 40%;
+  height: 40%;
+  border: 5px solid transparent;
 }
 
 .spinner-text {
@@ -109,3 +109,9 @@ button {
 width: 300px; 
 height: auto; 
 }
+
+.small-gif {
+  width: 30px; 
+  height: auto; 
+  
+  }

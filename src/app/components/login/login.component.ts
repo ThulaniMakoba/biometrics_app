@@ -33,6 +33,10 @@ export class LoginComponent implements OnInit {
   retryCount: number = 0;
   maxRetry: number = 3;
   isButtonDisabled = false;
+  showSpinner: boolean = false;
+  progressMessage: string = '';
+  isLogin = false;
+  
 
   userVerification: VerificationRequest = {
     computerMotherboardSerialNumber: localStorage.getItem('motherboardSerialNumber') ?? ""
@@ -98,6 +102,7 @@ export class LoginComponent implements OnInit {
   generatePassiveLivenessSelfie(image: unknown) {
     this.photoImage = jpegBase64ToStringBase64(image);
     this.passiveLivenessSelfieModel.image.Data = this.photoImage;
+    this.progressMessage = 'Generate Passive Liveness Selfie...'
     this.innovatricsService.generatePassiveLivenessSelfie(this.customerId, this.passiveLivenessSelfieModel).subscribe({
       next: (_) => {
         this.evaluatePassiveLiveness();
@@ -109,6 +114,7 @@ export class LoginComponent implements OnInit {
   }
 
   evaluatePassiveLiveness() {
+    this.progressMessage = 'Evaluate Passive Liveness...'
     this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
       next: (response: ScoreResponse) => {
         const score: number = +response.score;
@@ -128,16 +134,20 @@ export class LoginComponent implements OnInit {
   }
 
   probeFaceVerification(image: unknown) {
+    this.progressMessage = 'Authenticating Face for login...'
     this.probeFaceRequest.Image.Data = image;
     this.probeFaceRequest.Detection.Mode = 'STRICT';
     this.probeFaceRequest.Detection.Facesizeratio.Max = 0.5;
     this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
     this.probeFaceRequest.referenceFaceId = this.referenceFaceId;
     this.loadingService.showLoading();
+    this.isLogin = true;
 
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: UserModel) => {
          this.loadingService.hideLoading();
+         this.isLogin = false;
+         this.progressMessage = ' ';
         this.authService.login(response)
       },
       complete: () => {
@@ -158,6 +168,7 @@ export class LoginComponent implements OnInit {
     this.imageUrl = URL.createObjectURL(imageData.image);
     blobToBase64(this.imageUrl)
       .then(base64String => {
+        this.showSpinner = true;
         this.alertService.clear()
         this.generatePassiveLivenessSelfie(base64String);
       });
@@ -169,5 +180,4 @@ export class LoginComponent implements OnInit {
     this.alertService.error(error.message);
     alert(error);
   }
-
 }
