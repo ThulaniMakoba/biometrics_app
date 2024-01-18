@@ -58,11 +58,11 @@ export class LoginComponent implements OnInit {
           this.referenceFaceId = response.referenceFaceId;
           this.createCustomer();
         }
-        else{
+        else {
           this.loadingService.hideLoading();
           this.showMessage = true;
         }
-       
+
       }
     })
   }
@@ -116,7 +116,7 @@ export class LoginComponent implements OnInit {
         if (score < 0.89) {
           this.retryCount++;
           this.evaluateRetries()
-          this.alertService.error("Failed Liveness. Please try again.")
+          this.alertService.error(`Failed Liveness. Please try again. Left with ${this.maxRetry - this.retryCount} attempts!`);
           return;
         }
         this.probeFaceVerification(this.photoImage);
@@ -137,7 +137,7 @@ export class LoginComponent implements OnInit {
 
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: UserModel) => {
-         this.loadingService.hideLoading();
+        this.loadingService.hideLoading();
         this.authService.login(response)
       },
       complete: () => {
@@ -150,8 +150,9 @@ export class LoginComponent implements OnInit {
   }
 
   evaluateRetries() {
-    if (this.retryCount === this.maxRetry)
+    if (this.retryCount === this.maxRetry) {
       this.showCamera = false;
+    }
   }
 
   handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {
