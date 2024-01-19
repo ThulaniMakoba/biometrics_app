@@ -115,8 +115,8 @@ export class UserRegistrationComponent {
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
         if (response.userId > 0) {
-          //alert(response.message)
-          this.alertService.success('User details successfully saved', false);
+         
+          this.alertService.success(`User Details successfully saved. eDNA user Id: ${response.ednaId}`, false);
           this.userId = response.userId;
           this.createCustomer();
           return;
