@@ -72,8 +72,6 @@ export class UserRegistrationComponent {
 
   ngOnInit() {
 
-    this.checkIfComputerHasUser(this.userVerification)
-
     this.userRegistrationForm = this.formBuilder.group({
       idNumber: ['', [Validators.required, this.validateIdNumber]],
       firstName: ['', Validators.required],
@@ -84,18 +82,6 @@ export class UserRegistrationComponent {
   }
   protected get f() {
     return this.userRegistrationForm.controls;
-  }
-
-  checkIfComputerHasUser(verification: VerificationRequest) {
-    this.userService.verifyUser(verification).subscribe({
-      next: (response: VerificationResponse) => {
-        if (response.userExist) {
-          this.disableFormFields();
-          this.hideActionButtons = true;
-          this.alertService.error('Cannot register user, this computer has an existing user', false);
-        }
-      }
-    })
   }
 
   disableFormFields() {
@@ -115,7 +101,7 @@ export class UserRegistrationComponent {
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
         if (response.userId > 0) {
-         
+
           this.alertService.success(`User Details successfully saved. eDNA user Id: ${response.ednaId}`, false);
           this.userId = response.userId;
           this.createCustomer();
@@ -162,7 +148,7 @@ export class UserRegistrationComponent {
     this.innovatricsService.generatePassiveLivenessSelfie(this.customerId, this.passiveLivenessSelfieModel).subscribe({
       next: (_: any) => {
         this.evaluatePassiveLiveness();
-        
+
       },
       error: (error: any) => {
         this.alertService.error('Error Generating Passive Liveness Selfie:', error);

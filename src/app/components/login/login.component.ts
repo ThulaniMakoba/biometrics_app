@@ -26,7 +26,6 @@ export class LoginComponent implements OnInit {
   showMessage: boolean = false;
   imageUrl = '';
   probeFaceRequest: ProbeFaceRequest = new ProbeFaceRequest();
-  referenceFaceId: string = '';
   customerId: string = '';
   passiveLivenessSelfieModel: PassiveLivenessSelfieRequestModel = new PassiveLivenessSelfieRequestModel();
   photoImage: string = '';
@@ -36,7 +35,7 @@ export class LoginComponent implements OnInit {
   showSpinner: boolean = false;
   progressMessage: string = '';
   isLogin = false;
-  
+
 
   userVerification: VerificationRequest = {
     computerMotherboardSerialNumber: localStorage.getItem('motherboardSerialNumber') ?? ""
@@ -52,23 +51,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadingService.showLoading();
-    this.verifyUser(this.userVerification)
-  }
-
-  verifyUser(request: VerificationRequest) {
-    this.userService.verifyUser(request).subscribe({
-      next: (response: VerificationResponse) => {
-        if (response.userExist) {
-          this.referenceFaceId = response.referenceFaceId;
-          this.createCustomer();
-        }
-        else {
-          this.loadingService.hideLoading();
-          this.showMessage = true;
-        }
-
-      }
-    })
+    this.createCustomer();
   }
 
   // TODO: Remove this code, use handleLiveness class to implement below code
@@ -139,15 +122,17 @@ export class LoginComponent implements OnInit {
     this.probeFaceRequest.Detection.Mode = 'STRICT';
     this.probeFaceRequest.Detection.Facesizeratio.Max = 0.5;
     this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
-    this.probeFaceRequest.referenceFaceId = this.referenceFaceId;
+    this.probeFaceRequest.eDNAId = 100004;
+    this.probeFaceRequest.idNumber = undefined;
+
     this.loadingService.showLoading();
     this.isLogin = true;
 
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: UserModel) => {
         this.loadingService.hideLoading();
-         this.isLogin = false;
-         this.progressMessage = ' ';
+        this.isLogin = false;
+        this.progressMessage = ' ';
         this.authService.login(response)
       },
       complete: () => {
