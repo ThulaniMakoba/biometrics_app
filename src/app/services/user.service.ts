@@ -12,16 +12,12 @@ import { RegisterUserResponse } from '../models/register-user-response.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:5000/api/User'
+  private apiUrl = 'http://localhost:5111/api/User'
 
   constructor(private http: HttpClient) { }
 
   register(request: UserModel): Observable<RegisterUserResponse> {
     return this.http.post<RegisterUserResponse>(`${this.apiUrl}/register`, request);
-  }
-
-  verifyUser(request: VerificationRequest): Observable<VerificationResponse> {
-    return this.http.post<VerificationResponse>(`${this.apiUrl}/verify-user`, request)
   }
 
   probeFaceVerification(request: ProbeFaceRequest): Observable<UserModel> {
