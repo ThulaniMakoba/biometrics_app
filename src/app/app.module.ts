@@ -38,6 +38,7 @@ import { LoginDialogComponent } from './components/login-dialog/login-dialog.com
 import { MatDialogModule } from '@angular/material/dialog'; 
 import { DialogService } from './services/dialog.service';
 import {MatRadioModule} from '@angular/material/radio';
+import { BlankComponent } from './components/blank/blank.component';
 
 
 @NgModule({
@@ -64,7 +65,8 @@ import {MatRadioModule} from '@angular/material/radio';
     HomeComponent,
     SuccessErrorComponent,
     LockedOutComponent,
-    LoginDialogComponent
+    LoginDialogComponent,
+    BlankComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [BrowserModule, HttpClientModule, FormsModule, AppRoutingModule, BrowserAnimationsModule, ReactiveFormsModule,

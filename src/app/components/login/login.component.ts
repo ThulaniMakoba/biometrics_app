@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CreateCustomerResponse } from 'src/app/models/create-customer-response.model';
 import { PassiveLivenessSelfieRequestModel } from 'src/app/models/passive-liveness-selfie-request.model';
 import { ProbeFaceRequest } from 'src/app/models/probe-face-request.model';
@@ -15,6 +15,8 @@ import { LoadingService } from 'src/app/services/loading.service';
 import { UserService } from 'src/app/services/user.service';
 import { OnPhotoTakenEventValue } from 'src/app/types';
 import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
+import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
+import { LoginIdDialogRequest } from 'src/app/models/login-id-dialog-request.model';
 
 
 @Component({
@@ -37,28 +39,30 @@ export class LoginComponent implements OnInit {
   showSpinner: boolean = false;
   progressMessage: string = '';
   isLogin = false;
+  requestLoginHolder:LoginIdDialogRequest;
 
 
   userVerification: VerificationRequest = {
     computerMotherboardSerialNumber: localStorage.getItem('motherboardSerialNumber') ?? ""
   }
 
-
   constructor(private userService: UserService,
     private authService: AuthService,
     private innovatricsService: InnovatricsService,
     private alertService: AlertService,
-    public loadingService: LoadingService
+    public loadingService: LoadingService,
+    private route: ActivatedRoute
     
   ) { }
 
   ngOnInit(): void {
-    this.loadingService.showLoading();
-    this.createCustomer();
+    
+    if(this.authService.userIdRequest !== undefined)
+      this.createCustomer();
   }
-
   // TODO: Remove this code, use handleLiveness class to implement below code
   createCustomer(): void {
+    this.loadingService.showLoading();
     this.innovatricsService.createCustomer().subscribe({
       next: (response: CreateCustomerResponse) => {
         this.createLiveness(response.id)
@@ -125,9 +129,9 @@ export class LoginComponent implements OnInit {
     this.probeFaceRequest.Detection.Mode = 'STRICT';
     this.probeFaceRequest.Detection.Facesizeratio.Max = 0.5;
     this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
-    this.probeFaceRequest.eDNAId = 100004;
-    this.probeFaceRequest.idNumber = undefined;
-
+    this.probeFaceRequest.eDNAId = this.authService.userIdRequest.eDNAId;
+    this.probeFaceRequest.idNumber = this.authService.userIdRequest.SAId;
+    debugger
     this.loadingService.showLoading();
     this.isLogin = true;
 

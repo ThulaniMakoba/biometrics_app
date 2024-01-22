@@ -5,6 +5,7 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { SuccessErrorComponent } from './components/success-error/success-error.component';
 import { LockedOutComponent } from './components/locked-out/locked-out.component';
+import { BlankComponent } from './components/blank/blank.component';
 
 
 
@@ -14,7 +15,9 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'success-error-page', component: SuccessErrorComponent },
-  { path: 'locked-out', component: LockedOutComponent }
+  { path: 'locked-out', component: LockedOutComponent },
+  { path: '_', component: BlankComponent }
+  
 ];
 
 @NgModule({

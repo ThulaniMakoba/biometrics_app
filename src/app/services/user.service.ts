@@ -12,7 +12,7 @@ import { RegisterUserResponse } from '../models/register-user-response.model';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:5111/api/User'
+  private apiUrl = 'http://localhost:5000/api/User'
 
   constructor(private http: HttpClient) { }
 

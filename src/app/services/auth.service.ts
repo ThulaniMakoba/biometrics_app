@@ -4,6 +4,7 @@ import { ScoreResponse } from '../models/score-response.model';
 import { Router } from '@angular/router';
 import { MessageService } from './message.service';
 import { UserModel } from '../models/user-model';
+import { LoginIdDialogRequest } from '../models/login-id-dialog-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +13,24 @@ export class AuthService {
   session: any = null;
   retryCount: number = 0;
   maxRetry: number = 3;
-  isAccountLocked: boolean = false
+  isAccountLocked: boolean = false;
+  userIdRequest: LoginIdDialogRequest
 
   constructor(
     private alertService: AlertService,
     private router: Router,
     private messageService: MessageService
   ) { }
+
+
+  passIDtoLogin(idRequest:LoginIdDialogRequest)
+  {
+    debugger
+      this.userIdRequest = idRequest;
+      // Navigate to the login screen with the selected ID
+      this.router.navigate(['login']);
+  }
+
 
   login(userDetails: UserModel) {
 
