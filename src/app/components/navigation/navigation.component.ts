@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ComputerConfigResponse } from 'src/app/models/computer-config-response.model';
 import { AuthService } from 'src/app/services/auth.service';
 import { ConfigService } from 'src/app/services/config.service';
+import { DialogService } from 'src/app/services/dialog.service';
 
 @Component({
   selector: 'app-navigation',
@@ -15,8 +16,13 @@ export class NavigationComponent implements OnInit {
     this.fetchComputerSidNumber();
   }
 
-  constructor(private config: ConfigService, public authService: AuthService) { }
+  constructor(private config: ConfigService, public authService: AuthService,private dialogService: DialogService) { }
 
+  openLoginDialog() {
+    this.dialogService.openLoginDialog().subscribe(result => {
+      console.log('Dialog closed with result:', result);
+    });
+  }
   fetchComputerSidNumber(): void {
     this.config.fetchComputerSidNumber().subscribe({
       next: (response: ComputerConfigResponse) => {

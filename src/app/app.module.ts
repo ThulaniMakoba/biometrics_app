@@ -34,6 +34,11 @@ import { AlertComponent } from './components/Alerts/alert.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { LockedOutComponent } from './components/locked-out/locked-out.component';
+import { LoginDialogComponent } from './components/login-dialog/login-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog'; 
+import { DialogService } from './services/dialog.service';
+import {MatRadioModule} from '@angular/material/radio';
+
 
 @NgModule({
   declarations: [
@@ -58,7 +63,8 @@ import { LockedOutComponent } from './components/locked-out/locked-out.component
     NavigationComponent,
     HomeComponent,
     SuccessErrorComponent,
-    LockedOutComponent
+    LockedOutComponent,
+    LoginDialogComponent
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   imports: [BrowserModule, HttpClientModule, FormsModule, AppRoutingModule, BrowserAnimationsModule, ReactiveFormsModule,
@@ -67,9 +73,11 @@ import { LockedOutComponent } from './components/locked-out/locked-out.component
     MatButtonModule,
     MatProgressSpinnerModule,
     MatIconModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatDialogModule,
+    MatRadioModule
   ],
-  providers: [],
+  providers: [DialogService],
   bootstrap: [AppComponent],
 })
 export class AppModule { }

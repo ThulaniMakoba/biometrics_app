@@ -5,8 +5,8 @@
   </div>
   <div class="links">
     <a routerLink="/home" *ngIf="!authService.isAccountLocked">Home</a>
-    <a routerLink="/registration" *ngIf="!authService.isAccountLocked">Registration</a>
-    <a routerLink="/login" *ngIf="(!authService.session && !authService.isAccountLocked)">Authenticate</a>
+    <a routerLink="/registration" *ngIf="!authService.isAccountLocked">Registration</a>    
+    <a routerLink="/login" *ngIf="(!authService.session && !authService.isAccountLocked)"(click)="openLoginDialog()">Authenticate</a>    
     <a routerLink="#" (click)="authService.logout()"
       *ngIf="(authService.session&& !authService.isAccountLocked)">Logout</a>
   </div>

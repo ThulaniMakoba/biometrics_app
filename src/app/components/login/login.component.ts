@@ -9,11 +9,13 @@ import { VerificationResponse } from 'src/app/models/verification-response.model
 import { VerificationRequest } from 'src/app/models/verify-user-request.model';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { DialogService } from 'src/app/services/dialog.service';
 import { InnovatricsService } from 'src/app/services/innovatrics.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { UserService } from 'src/app/services/user.service';
 import { OnPhotoTakenEventValue } from 'src/app/types';
 import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
+
 
 @Component({
   selector: 'app-login',
@@ -47,6 +49,7 @@ export class LoginComponent implements OnInit {
     private innovatricsService: InnovatricsService,
     private alertService: AlertService,
     public loadingService: LoadingService
+    
   ) { }
 
   ngOnInit(): void {
