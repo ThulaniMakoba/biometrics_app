@@ -1,29 +1,28 @@
 <!-- login-dialog.component.html -->
 <div class="login-dialog-container">
-    <h2>Login Options</h2>
-  
-    <mat-radio-group [(ngModel)]="selectedOption">
-      <mat-radio-button value="option1">SA ID Number</mat-radio-button>
-      <br>
-      <mat-radio-button value="option2">eDNA ID</mat-radio-button>
-    </mat-radio-group>
-  
-    <!-- Display the text box only when "SA ID Number" is selected -->
-    <div *ngIf="selectedOption === 'option1'">
-      <label for="saIdInput">SA ID:</label>
-      <input type="text" id="saIdInput" [(ngModel)]="saId" maxlength="13">
-    </div>
-  
-    <!-- Display the text box only when "eDNA ID" is selected -->
-    <div *ngIf="selectedOption === 'option2'">
-      <label for="ednaIdInput">eDNA ID:</label>
-      <input type="text" id="ednaIdInput" [(ngModel)]="ednaId" maxlength="6">
-    </div>
-  
-    <div class="button-container">
-      <!-- Call the navigateToLogin method when the "Next" button is clicked -->
-      <button mat-button (click)="navigateToLogin()">Next</button>
-      <button mat-button (click)="onClose()">Close</button>
-    </div>
+  <h2>Authenticate With:</h2>
+
+  <mat-radio-group [(ngModel)]="selectedOption">
+    <mat-radio-button value="option1">SA ID Number</mat-radio-button>
+    <br>
+    <mat-radio-button value="option2">eDNA ID</mat-radio-button>
+  </mat-radio-group>
+
+  <!-- Display the text box only when "SA ID Number" is selected -->
+  <div *ngIf="selectedOption === 'option1'">
+    <label for="saIdInput">SA ID:</label>
+    <input type="text" id="saIdInput" [(ngModel)]="saId" maxlength="13">
   </div>
-  
+
+  <!-- Display the text box only when "eDNA ID" is selected -->
+  <div *ngIf="selectedOption === 'option2'">
+    <label for="ednaIdInput">eDNA ID:</label>
+    <input type="text" id="ednaIdInput" [(ngModel)]="ednaId" maxlength="6">
+  </div>
+
+  <div class="button-container">
+    <!-- Disable the "Next" button when no option is selected or the associated text field is empty -->
+    <button mat-button (click)="navigateToLogin()" [disabled]="!selectedOption || (selectedOption === 'option1' && !saId) || (selectedOption === 'option2' && !ednaId)">Next</button>
+    <button mat-button (click)="onClose()">Close</button>
+  </div>    
+</div>
