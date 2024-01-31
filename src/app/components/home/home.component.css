@@ -10,12 +10,12 @@
       color: #333;
     }
   
-    p {
+    :p {
       color: #666;
       margin-bottom: 20px;
     }
   
-    a {
+    :a {
       display: inline-block;
       text-decoration: none;
       color: #fff;
@@ -24,7 +24,7 @@
       border-radius: 4px;
       transition: background-color 0.3s ease;
   
-      img {
+      :is(img) {
         width: 24px;
         height: 24px;
         margin-right: 10px;

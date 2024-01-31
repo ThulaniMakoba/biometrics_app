@@ -12,17 +12,32 @@
 
                     <div class="mb-3">
                         <label for="idNumber" class="required" style="text-align: left;">Id Number</label>
-                        <input type="text" formControlName="idNumber" class="form-control"
+                        <input type="text" formControlName="idNumber" class="form-control" maxlength="13"
                             [ngClass]="{ 'is-invalid': submitted && f.idNumber.errors }"
-                            placeholder="Enter your ID Number " />
+                            placeholder="Enter your ID Number" (blur)="validateIDNumber()" />
                         <span class="text-danger"
                             *ngIf="(f.idNumber.touched || submitted) && f.idNumber.errors?.['required']">
                             ID Number is required
                         </span>
-                        <span class="text-danger" *ngIf="f.idNumber.errors?.['invalidIdNumber'] && f.idNumber.touched">
+                        <span class="text-danger" *ngIf="f.idNumber.errors?.['invalidIdNumber'] && (f.idNumber.touched || submitted)">
                             ID Number is Invalid
                         </span>
                     </div>
+
+                    <!-- <div class="mb-3">
+                        <label for="idNumber" class="required" style="text-align: left;">Id Number</label>
+                        <input type="text" formControlName="idNumber" class="form-control"
+                            [ngClass]="{ 'is-invalid': (f.idNumber.touched || submitted) && (f.idNumber.errors || f.idNumber.hasError('invalidIdNumber')) }"
+                            placeholder="Enter your ID Number" (blur)="validateIDNumber()" />
+                        <span class="text-danger"
+                            *ngIf="(f.idNumber.touched || submitted) && f.idNumber.errors?.['required']">
+                            ID Number is required
+                        </span>
+                        <span class="text-danger" *ngIf="f.idNumber.errors?.['invalidIdNumber'] && (f.idNumber.touched || submitted)">
+                            ID Number is Invalid
+                        </span>
+                    </div> -->
+                   
 
 
                     <div class="mb-3">

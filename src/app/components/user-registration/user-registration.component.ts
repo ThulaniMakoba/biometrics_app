@@ -15,7 +15,7 @@ import { InnovatricsService } from 'src/app/services/innovatrics.service';
 import { MessageService } from 'src/app/services/message.service';
 import { UserService } from 'src/app/services/user.service';
 import { OnPhotoTakenEventValue } from 'src/app/types';
-import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
+import { blobToBase64, jpegBase64ToStringBase64, validateSAIDNumber } from 'src/app/utils/helpers';
 
 @Component({
   selector: 'app-user-registration',
@@ -35,6 +35,7 @@ export class UserRegistrationComponent {
   showSpinner: boolean = false;
   hideActionButtons: boolean = false;
   progressMessage: string = '';
+  idNumber: string = ''; 
 
   motherboardSerialNumber: string | null = localStorage.getItem('motherboardSerialNumber');
   motherboardSerialNumberExist: string | null = localStorage.getItem('motherboardSerialNumberExist');
@@ -73,7 +74,8 @@ export class UserRegistrationComponent {
   ngOnInit() {
 
     this.userRegistrationForm = this.formBuilder.group({
-      idNumber: ['', [Validators.required, this.validateIdNumber]],
+      idNumber: ['', [Validators.required]],
+      //idNumber: new FormControl<string | null>(''), 
       firstName: ['', Validators.required],
       lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -89,15 +91,36 @@ export class UserRegistrationComponent {
     this.userRegistrationForm.controls['firstName'].disable();
     this.userRegistrationForm.controls['lastName'].disable();
     this.userRegistrationForm.controls['email'].disable();
+  }  
+  
+  validateIDNumber() {
+    const idNumberControl = this.userRegistrationForm.get('idNumber');    
+    if (idNumberControl?.value) {
+      const idNumber = idNumberControl.value;
+      const isValid = validateSAIDNumber(idNumber);
+
+      if (isValid) {
+        console.log(`${idNumber} is a valid South African ID number.`);
+        // Continue with your registration logic if needed        
+        idNumberControl.setErrors(null);      
+        
+      } else {
+        console.log(`${idNumber} is not a valid South African ID number.`);
+        // Display an error message or take appropriate action
+        idNumberControl.setErrors({ invalidIdNumber: true });
+        
+      }
+    }
   }
 
-  registerUser(): void {
+
+  registerUser(): void {    
     if (this.userRegistrationForm.invalid) {
       this.markFormGroupTouched(this.userRegistrationForm);
     }
     if (this.userRegistrationForm.invalid)
       return;
-    this.handleUserDetailsFormData();
+    this.handleUserDetailsFormData();    
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
         if (response.userId > 0) {
@@ -107,6 +130,7 @@ export class UserRegistrationComponent {
           this.createCustomer();
           return;
         }
+        this.alertService.error(response.message, false)    
       },
       error: (error) => {
         this.alertService.error(`Error registering user ${error} `, false)
@@ -239,16 +263,16 @@ export class UserRegistrationComponent {
   }
 
   //Move this validation to util class, make it a helper
-  validateIdNumber(control: { value: any; }) {
-    const idNumber = control.value;
+  // validateIdNumber(control: { value: any; }) {
+  //   const idNumber = control.value;
 
-    if (idNumber && idNumber.length === 13 && /^\d+$/.test(idNumber)) {
-      // Basic format validation, you can add more checks if needed
-      return null;
-    } else {
-      return { invalidIdNumber: true };
-    }
-  }
+  //   if (idNumber && idNumber.length === 13 && /^\d+$/.test(idNumber)) {
+  //     // Basic format validation, you can add more checks if needed
+  //     return null;
+  //   } else {
+  //     return { invalidIdNumber: true };
+  //   }
+  // }
 
   handleUserDetailsFormData() {
     this.userModel.idNumber = this.userRegistrationForm.get('idNumber')?.value ?? "";
