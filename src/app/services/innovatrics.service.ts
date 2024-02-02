@@ -7,13 +7,14 @@ import { CreateReferenceFaceResponse } from "../models/create-reference-face-res
 import {CreateReferenceFaceWithoutBackgroundResponse} from "../models/create-reference-face-without-background-response.model"
 import { PassiveLivenessSelfieRequestModel } from "../models/passive-liveness-selfie-request.model";
 import { ScoreResponse } from "../models/score-response.model";
+import { environment } from '../../../src/environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 
 export class InnovatricsService {
-    private apiUrl = 'http://localhost:5000/api/Innovatrics'
+    private apiUrl = `${environment.ednaServiceApiUrl}/api/Innovatrics`;
 
     constructor(private http: HttpClient) { }
 

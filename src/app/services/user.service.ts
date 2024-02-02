@@ -5,14 +5,14 @@ import { UserModel } from '../models/user-model';
 import { VerificationRequest } from '../models/verify-user-request.model';
 import { VerificationResponse } from '../models/verification-response.model';
 import { ProbeFaceRequest } from '../models/probe-face-request.model';
-
 import { RegisterUserResponse } from '../models/register-user-response.model';
+import { environment } from '../../../src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'http://localhost:5000/api/User'
+  private apiUrl = `${environment.ednaServiceApiUrl}/api/User`;
 
   constructor(private http: HttpClient) { }
 

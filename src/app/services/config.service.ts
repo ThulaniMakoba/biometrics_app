@@ -2,12 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ComputerConfigResponse } from '../models/computer-config-response.model';
+import { environment } from '../../../src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
-  private apiUrl = 'http://localhost:5000/api/Config'
+  private apiUrl = `${environment.ednaServiceApiUrl}/api/Config`;
 
   constructor(private http: HttpClient) { }
 

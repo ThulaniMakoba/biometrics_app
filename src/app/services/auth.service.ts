@@ -25,9 +25,7 @@ export class AuthService {
 
   passIDtoLogin(idRequest:LoginIdDialogRequest)
   {
-    debugger
-      this.userIdRequest = idRequest;
-      // Navigate to the login screen with the selected ID
+      this.userIdRequest = idRequest;   
       this.router.navigate(['login']);
   }
 

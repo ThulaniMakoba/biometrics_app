@@ -14,6 +14,7 @@ import { AlertService } from 'src/app/services/alert.service';
 import { InnovatricsService } from 'src/app/services/innovatrics.service';
 import { MessageService } from 'src/app/services/message.service';
 import { UserService } from 'src/app/services/user.service';
+import { InnovatricsOperations } from 'src/app/shared/innovatrics-operations.class';
 import { OnPhotoTakenEventValue } from 'src/app/types';
 import { blobToBase64, jpegBase64ToStringBase64, validateSAIDNumber } from 'src/app/utils/helpers';
 
@@ -35,7 +36,8 @@ export class UserRegistrationComponent {
   showSpinner: boolean = false;
   hideActionButtons: boolean = false;
   progressMessage: string = '';
-  idNumber: string = ''; 
+  idNumber: string = '';
+  unEditedImage: unknown;
 
   motherboardSerialNumber: string | null = localStorage.getItem('motherboardSerialNumber');
   motherboardSerialNumberExist: string | null = localStorage.getItem('motherboardSerialNumberExist');
@@ -68,7 +70,7 @@ export class UserRegistrationComponent {
 
   passiveLivenessSelfieModel: PassiveLivenessSelfieRequestModel = new PassiveLivenessSelfieRequestModel();
 
-  constructor(private userService: UserService, private messageService: MessageService, private formBuilder: FormBuilder,
+  constructor(private userService: UserService, private innovatricsOperation: InnovatricsOperations, private formBuilder: FormBuilder,
     private innovatricsService: InnovatricsService, private alertService: AlertService) { }
 
   ngOnInit() {
@@ -91,46 +93,39 @@ export class UserRegistrationComponent {
     this.userRegistrationForm.controls['firstName'].disable();
     this.userRegistrationForm.controls['lastName'].disable();
     this.userRegistrationForm.controls['email'].disable();
-  }  
-  
+  }
+
   validateIDNumber() {
-    const idNumberControl = this.userRegistrationForm.get('idNumber');    
+    const idNumberControl = this.userRegistrationForm.get('idNumber');
     if (idNumberControl?.value) {
       const idNumber = idNumberControl.value;
       const isValid = validateSAIDNumber(idNumber);
 
       if (isValid) {
-        console.log(`${idNumber} is a valid South African ID number.`);
-        // Continue with your registration logic if needed        
-        idNumberControl.setErrors(null);      
-        
+        idNumberControl.setErrors(null);
       } else {
-        console.log(`${idNumber} is not a valid South African ID number.`);
-        // Display an error message or take appropriate action
         idNumberControl.setErrors({ invalidIdNumber: true });
-        
       }
     }
   }
 
-
-  registerUser(): void {    
+  registerUser(): void {
     if (this.userRegistrationForm.invalid) {
       this.markFormGroupTouched(this.userRegistrationForm);
     }
     if (this.userRegistrationForm.invalid)
       return;
-    this.handleUserDetailsFormData();    
+    this.handleUserDetailsFormData();
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
         if (response.userId > 0) {
-
           this.alertService.success(`User Details successfully saved. eDNA user Id: ${response.ednaId}`, false);
           this.userId = response.userId;
-          this.createCustomer();
+          this.showCamera = true;
+          this.showRegistration = false;        
           return;
         }
-        this.alertService.error(response.message, false)    
+        this.alertService.error(response.message, false)
       },
       error: (error) => {
         this.alertService.error(`Error registering user ${error} `, false)
@@ -138,70 +133,52 @@ export class UserRegistrationComponent {
     })
   }
 
-  // TODO: Remove this code, use handleLiveness class to implement below code
   createCustomer(): void {
-    this.innovatricsService.createCustomer().subscribe({
-      next: (response: CreateCustomerResponse) => {
-        this.createLiveness(response.id)
-      },
-      complete: () => {
-      },
-      error: (error: any) => {
-        this.alertService.error('Innovatrics Integration error :', error);
+
+    this.innovatricsOperation.createCustomer()
+      .subscribe(res => {
+        if (res != undefined) {
+          this.customerId = res
+          this.createLiveness(this.customerId);
+        }
       }
-    })
+      );
   }
 
   createLiveness(customerId: string): void {
-    this.innovatricsService.createLiveness(customerId).subscribe({
-      next: (response: CreateCustomerResponse) => {
-        this.customerId = customerId;
-        this.showCamera = true;
-        this.showRegistration = false;
-      },
-      error: (error: any) => {
-        this.alertService.error('Error create liveness:', error);
-      }
-    })
+
+    this.innovatricsOperation.createLiveness(customerId)
+      .subscribe(res => {
+        if (res) {          
+          this.generatePassiveLivenessSelfie()
+        }
+      })
   }
 
-  generatePassiveLivenessSelfie(image: unknown) {
-    this.photoImage = jpegBase64ToStringBase64(image);
-    this.passiveLivenessSelfieModel.image.Data = this.photoImage;
-    this.progressMessage = 'Generate Passive Liveness Selfie...'
-    this.innovatricsService.generatePassiveLivenessSelfie(this.customerId, this.passiveLivenessSelfieModel).subscribe({
-      next: (_: any) => {
-        this.evaluatePassiveLiveness();
+  generatePassiveLivenessSelfie() {
 
-      },
-      error: (error: any) => {
-        this.alertService.error('Error Generating Passive Liveness Selfie:', error);
-      }
-    })
+    this.progressMessage = 'Generate Passive Liveness Selfie...'
+    this.innovatricsOperation.generatePassiveLivenessSelfie(this.unEditedImage, this.customerId)
+      .subscribe(res => {
+        if (res != undefined) {
+          this.photoImage = res as string;
+          this.evaluatePassiveLiveness();
+        }
+      })
   }
 
   evaluatePassiveLiveness() {
-    this.progressMessage = 'Evaluate Passive Liveness...'
-    this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
-      next: (response: { score: string | number; }) => {
-        const score: number = +response.score;
-        //The code should be move to the back end
-        if (score < 0.89) {
-          //use the alert service to display the message
-          this.alertService.error("Fail Liveness")
-          return;
-        }
-        this.createReferenceFace(this.photoImage);
-      },
-      error: (error: any) => {
-        this.alertService.error('Error Evaluating Passive Liveness:', error);
-      }
-    })
+    this.progressMessage = 'Evaluate Passive Liveness...';
+
+    this.innovatricsOperation.evaluatePassiveLiveness(this.customerId)
+      .subscribe(res => {
+        if (res)
+          this.createReferenceFace(this.photoImage);
+      })
   }
 
   createReferenceFace(image: string) {
     this.referenceFaceModel.Image.Data = image;
-
     this.referenceFaceModel.Detection.Mode = 'STRICT';
     this.referenceFaceModel.Detection.Facesizeratio.Max = 0.5;
     this.referenceFaceModel.Detection.Facesizeratio.Min = 0.05;
@@ -262,18 +239,6 @@ export class UserRegistrationComponent {
     });
   }
 
-  //Move this validation to util class, make it a helper
-  // validateIdNumber(control: { value: any; }) {
-  //   const idNumber = control.value;
-
-  //   if (idNumber && idNumber.length === 13 && /^\d+$/.test(idNumber)) {
-  //     // Basic format validation, you can add more checks if needed
-  //     return null;
-  //   } else {
-  //     return { invalidIdNumber: true };
-  //   }
-  // }
-
   handleUserDetailsFormData() {
     this.userModel.idNumber = this.userRegistrationForm.get('idNumber')?.value ?? "";
     this.userModel.firstName = this.userRegistrationForm.get('firstName')?.value ?? "";
@@ -284,9 +249,10 @@ export class UserRegistrationComponent {
   handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {
     blobToBase64(URL.createObjectURL(imageData.image))
       .then(base64String => {
-        this.showSpinner = true;
-        this.imageUrl = '';
-        this.generatePassiveLivenessSelfie(base64String);
+        this.showSpinner = true;        
+        this.imageUrl = '';       
+        this.unEditedImage = base64String;
+        this.createCustomer();
         this.alertService.clear();
       });
   }

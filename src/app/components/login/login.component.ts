@@ -17,6 +17,7 @@ import { OnPhotoTakenEventValue } from 'src/app/types';
 import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
 import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
 import { LoginIdDialogRequest } from 'src/app/models/login-id-dialog-request.model';
+import { InnovatricsOperations } from 'src/app/shared/innovatrics-operations.class';
 
 
 @Component({
@@ -39,7 +40,8 @@ export class LoginComponent implements OnInit {
   showSpinner: boolean = false;
   progressMessage: string = '';
   isLogin = false;
-  requestLoginHolder:LoginIdDialogRequest;
+  requestLoginHolder: LoginIdDialogRequest;
+  unEditedImage: unknown;
 
 
   userVerification: VerificationRequest = {
@@ -51,76 +53,113 @@ export class LoginComponent implements OnInit {
     private innovatricsService: InnovatricsService,
     private alertService: AlertService,
     public loadingService: LoadingService,
-    private route: ActivatedRoute
-    
+    private innovatricsOperation: InnovatricsOperations
+
   ) { }
 
   ngOnInit(): void {
-    
-    if(this.authService.userIdRequest !== undefined)
-      this.createCustomer();
+
+    if (this.authService.userIdRequest !== undefined)
+      this.showCamera = true;
   }
   // TODO: Remove this code, use handleLiveness class to implement below code
   createCustomer(): void {
-    this.loadingService.showLoading();
-    this.innovatricsService.createCustomer().subscribe({
-      next: (response: CreateCustomerResponse) => {
-        this.createLiveness(response.id)
-      },
-      complete: () => {
-      },
-      error: (error) => {
-        console.error('Error create customer:', error);
+    // this.loadingService.showLoading();
+
+    this.innovatricsOperation.createCustomer()
+      .subscribe(res => {
+        if (res != undefined) {
+          this.customerId = res
+          this.createLiveness(this.customerId);
+        }
       }
-    })
+      );
+    // this.innovatricsService.createCustomer().subscribe({
+    //   next: (response: CreateCustomerResponse) => {
+    //     this.createLiveness(response.id)
+    //   },
+    //   complete: () => {
+    //   },
+    //   error: (error) => {
+    //     console.error('Error create customer:', error);
+    //   }
+    // })
   }
 
   createLiveness(customerId: string): void {
-    this.innovatricsService.createLiveness(customerId).subscribe({
-      next: (response: CreateCustomerResponse) => {
-        this.showCamera = true;
-        this.customerId = customerId;
-        this.loadingService.hideLoading();
-      },
-      error: (error) => {
-        this.loadingService.hideLoading();
-        console.error('Error create liveness:', error);
-      }
-    })
+
+    this.innovatricsOperation.createLiveness(customerId)
+      .subscribe(res => {
+        if (res) {
+          this.generatePassiveLivenessSelfie()
+        }
+      })
+
+    // this.innovatricsService.createLiveness(customerId).subscribe({
+    //   next: (response: CreateCustomerResponse) => {
+    //     this.showCamera = true;
+    //     this.customerId = customerId;
+    //     this.loadingService.hideLoading();
+    //   },
+    //   error: (error) => {
+    //     this.loadingService.hideLoading();
+    //     console.error('Error create liveness:', error);
+    //   }
+    // })
   }
 
-  generatePassiveLivenessSelfie(image: unknown) {
-    this.photoImage = jpegBase64ToStringBase64(image);
-    this.passiveLivenessSelfieModel.image.Data = this.photoImage;
+  generatePassiveLivenessSelfie() {
+    // this.photoImage = jpegBase64ToStringBase64(image);
+    // this.passiveLivenessSelfieModel.image.Data = this.photoImage;
     this.progressMessage = 'Generate Passive Liveness Selfie...'
-    this.innovatricsService.generatePassiveLivenessSelfie(this.customerId, this.passiveLivenessSelfieModel).subscribe({
-      next: (_) => {
-        this.evaluatePassiveLiveness();
-      },
-      error: (error) => {
-        console.error('Error Generating Passive Liveness Selfie:', error);
-      }
-    })
+    this.innovatricsOperation.generatePassiveLivenessSelfie(this.unEditedImage, this.customerId)
+      .subscribe(res => {
+        if (res != undefined) {
+          this.photoImage = res as string;
+          this.evaluatePassiveLiveness();
+        }
+      })
+    // this.innovatricsService.generatePassiveLivenessSelfie(this.customerId, this.passiveLivenessSelfieModel).subscribe({
+    //   next: (_) => {
+    //     this.evaluatePassiveLiveness();
+    //   },
+    //   error: (error) => {
+    //     console.error('Error Generating Passive Liveness Selfie:', error);
+    //   }
+    // })
   }
 
   evaluatePassiveLiveness() {
     this.progressMessage = 'Evaluate Passive Liveness...'
-    this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
-      next: (response: ScoreResponse) => {
-        const score: number = +response.score;
 
-        if (score < 0.89) {
+    this.innovatricsOperation.evaluatePassiveLiveness(this.customerId)
+      .subscribe(res => {
+        if (!res) {
           this.retryCount++;
-          this.evaluateRetries()
+          this.evaluateRetries();
           this.alertService.error(`Failed Liveness. Please try again. Left with ${this.maxRetry - this.retryCount} attempts!`);
           return;
         }
+
         this.probeFaceVerification(this.photoImage);
-      },
-      error: (error) => {
-        console.error('Error Evaluating Passive Liveness:', error);
-      }
-    })
+      })
+    // this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
+    //   next: (response: ScoreResponse) => {
+    //     const score: number = +response.score;
+
+    //     if (score < 0.89) {
+    //       this.retryCount++;
+    //       // this.evaluateRetries() => Delete this code after testing retry flag
+    //       //Set flag for retryFlag failed liveness
+    //       this.alertService.error(`Failed Liveness. Please try again. Left with ${this.maxRetry - this.retryCount} attempts!`);
+    //       return;
+    //     }
+    //     this.probeFaceVerification(this.photoImage);
+    //   },
+    //   error: (error) => {
+    //     console.error('Error Evaluating Passive Liveness:', error);
+    //   }
+    // })
   }
 
   probeFaceVerification(image: unknown) {
@@ -131,13 +170,13 @@ export class LoginComponent implements OnInit {
     this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
     this.probeFaceRequest.eDNAId = this.authService.userIdRequest.eDNAId;
     this.probeFaceRequest.idNumber = this.authService.userIdRequest.SAId;
-    debugger
-    this.loadingService.showLoading();
+
+    // this.loadingService.showLoading();
     this.isLogin = true;
 
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: UserModel) => {
-        this.loadingService.hideLoading();
+        // this.loadingService.hideLoading();
         this.isLogin = false;
         this.progressMessage = ' ';
         this.authService.login(response)
@@ -145,7 +184,7 @@ export class LoginComponent implements OnInit {
       complete: () => {
       },
       error: (error) => {
-        this.loadingService.hideLoading();
+        // this.loadingService.hideLoading();
         console.error('Error registering user:', error);
       }
     })
@@ -162,8 +201,11 @@ export class LoginComponent implements OnInit {
     blobToBase64(this.imageUrl)
       .then(base64String => {
         this.showSpinner = true;
-        this.alertService.clear()
-        this.generatePassiveLivenessSelfie(base64String);
+        this.alertService.clear();
+        this.unEditedImage = base64String;
+        this.createCustomer();
+        //Set flag retryFlag = true/false
+        // this.generatePassiveLivenessSelfie(base64String);
       });
     this.isButtonDisabled = true;
   }
