@@ -19,26 +19,11 @@
                             *ngIf="(f.idNumber.touched || submitted) && f.idNumber.errors?.['required']">
                             ID Number is required
                         </span>
-                        <span class="text-danger" *ngIf="f.idNumber.errors?.['invalidIdNumber'] && (f.idNumber.touched || submitted)">
+                        <span class="text-danger"
+                            *ngIf="f.idNumber.errors?.['invalidIdNumber'] && (f.idNumber.touched || submitted)">
                             ID Number is Invalid
                         </span>
                     </div>
-
-                    <!-- <div class="mb-3">
-                        <label for="idNumber" class="required" style="text-align: left;">Id Number</label>
-                        <input type="text" formControlName="idNumber" class="form-control"
-                            [ngClass]="{ 'is-invalid': (f.idNumber.touched || submitted) && (f.idNumber.errors || f.idNumber.hasError('invalidIdNumber')) }"
-                            placeholder="Enter your ID Number" (blur)="validateIDNumber()" />
-                        <span class="text-danger"
-                            *ngIf="(f.idNumber.touched || submitted) && f.idNumber.errors?.['required']">
-                            ID Number is required
-                        </span>
-                        <span class="text-danger" *ngIf="f.idNumber.errors?.['invalidIdNumber'] && (f.idNumber.touched || submitted)">
-                            ID Number is Invalid
-                        </span>
-                    </div> -->
-                   
-
 
                     <div class="mb-3">
                         <label for="firstName" class="required">First Name</label>
@@ -89,7 +74,7 @@
     </div>
 </div>
 
-<div class="row" *ngIf="showCamera">
+<div class="row" *ngIf="showCamera && !imageUrl">
     <div class="col-md-6">
         <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)">
         </app-face-auto-capture>
@@ -99,7 +84,6 @@
         <br>
         <br>
         <div *ngIf="!imageUrl && showSpinner">
-            <!-- <mat-progress-spinner mode="indeterminate"></mat-progress-spinner> -->
             <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Capturing Face </h1>
             <div style="color: #3498db;">{{ progressMessage }}</div>
             <div class="spinner-container">
@@ -117,12 +101,10 @@
             <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Awaiting Face Capture</h1>
             <img src="assets/placeholder_face2.jpg" alt="image" class="small-image">
         </div>
-
-        <div *ngIf="imageUrl">
-            <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Captured Face</h1>
-            <app-result [imageUrl]="imageUrl"></app-result>
-        </div>
     </div>
 </div>
 
-
+<div *ngIf="imageUrl">
+    <h1 ng-style="{color: imageUrl ? 'black' : 'grey'}">Captured Face</h1>
+    <app-result [imageUrl]="imageUrl"></app-result>
+</div>

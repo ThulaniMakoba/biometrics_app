@@ -38,6 +38,7 @@ export class UserRegistrationComponent {
   progressMessage: string = '';
   idNumber: string = '';
   unEditedImage: unknown;
+  ednaNumber: number;
 
   motherboardSerialNumber: string | null = localStorage.getItem('motherboardSerialNumber');
   motherboardSerialNumberExist: string | null = localStorage.getItem('motherboardSerialNumberExist');
@@ -120,9 +121,10 @@ export class UserRegistrationComponent {
       next: (response: RegisterUserResponse) => {
         if (response.userId > 0) {
           this.alertService.success(`User Details successfully saved. eDNA user Id: ${response.ednaId}`, false);
+          this.ednaNumber = response.ednaId
           this.userId = response.userId;
           this.showCamera = true;
-          this.showRegistration = false;        
+          this.showRegistration = false;
           return;
         }
         this.alertService.error(response.message, false)
@@ -149,7 +151,7 @@ export class UserRegistrationComponent {
 
     this.innovatricsOperation.createLiveness(customerId)
       .subscribe(res => {
-        if (res) {          
+        if (res) {
           this.generatePassiveLivenessSelfie()
         }
       })
@@ -194,7 +196,7 @@ export class UserRegistrationComponent {
           return;
         } else {
           this.convertBase64ToImageUrl(response.base64Image);
-          this.alertService.success("Face Registered Successfully ")
+          this.alertService.success(`Face Registered Successfully! eDNA user Id: ${this.ednaNumber}`)
           this.progressMessage = '';
         }
 
@@ -249,8 +251,8 @@ export class UserRegistrationComponent {
   handlePhotoTaken<T>({ imageData, content }: OnPhotoTakenEventValue<T>) {
     blobToBase64(URL.createObjectURL(imageData.image))
       .then(base64String => {
-        this.showSpinner = true;        
-        this.imageUrl = '';       
+        this.showSpinner = true;
+        this.imageUrl = '';
         this.unEditedImage = base64String;
         this.createCustomer();
         this.alertService.clear();
