@@ -69,7 +69,7 @@ export class InnovatricsOperations {
         this.innovatricsService.evaluatePassiveLiveness(customerId).subscribe({
             next: (response) => {
                 const score: number = +response.score;
-
+                //This code should be move to the backend
                 if (score < 0.89) {
                     this.alertService.error(`Failed Liveness: score value: ${score} `)
                     success.next(false);

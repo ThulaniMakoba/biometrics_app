@@ -11,18 +11,19 @@ import { FaceComponentData } from '@innovatrics/dot-face-auto-capture/';
   selector: 'app-face-auto-capture',
   templateUrl: './face-auto-capture.component.html',
   //styleUrls: ['./face-auto-capture.component.css']
-  
-  
+
+
 })
 export class FaceAutoCaptureComponent implements OnInit {
   @Output() onPhotoTaken = new EventEmitter<OnPhotoTakenEventValue<FaceComponentData>>();
   @Output() onError = new EventEmitter<Error>();
   @Output() onBack = new EventEmitter<Step>();
   @Input() isLogin: boolean;
+  @Input() showSpinner: boolean;
   @Input() progressMessage: string;
 
   isButtonDisabled = true;
-  isBackButtonDisabled = true;  
+  isBackButtonDisabled = true;
 
   constructor() { }
 

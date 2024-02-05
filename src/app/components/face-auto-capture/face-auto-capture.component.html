@@ -4,7 +4,7 @@
     <div class="spinner">
         <!-- <button (click)="onBackClick()" class="button" [disabled]="isBackButtonDisabled">Go back</button> -->
         <button (click)="handleContinue()" class="button" [disabled]="isButtonDisabled">Continue detection</button>  
-        <img src="assets/blue_spinner.gif" class="small-gif" *ngIf="isLogin">
+        <img src="assets/blue_spinner.gif" class="small-gif" *ngIf="showSpinner">
         <div *ngIf="isLogin" style="color: #3498db;">{{ progressMessage }}</div>
     </div>
   </div>

@@ -23,10 +23,9 @@ export class AuthService {
   ) { }
 
 
-  passIDtoLogin(idRequest:LoginIdDialogRequest)
-  {
-      this.userIdRequest = idRequest;   
-      this.router.navigate(['login']);
+  passIDtoLogin(idRequest: LoginIdDialogRequest) {
+    this.userIdRequest = idRequest;
+    this.router.navigate(['login']);
   }
 
 
@@ -36,6 +35,7 @@ export class AuthService {
       this.session = { isAuthenticated: true };
       this.alertService.error("Login Successfully");
       this.messageService.sendUserDetails(userDetails);
+      this.retryCount = 0;
       this.clearMessage(10000);
       this.router.navigate(['/home'])
     }

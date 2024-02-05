@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
   isButtonDisabled = false;
   showSpinner: boolean = false;
   progressMessage: string = '';
-  isLogin = false;
+  isLogin = false;  
   requestLoginHolder: LoginIdDialogRequest;
   unEditedImage: unknown;
 
@@ -59,12 +59,14 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
 
-    if (this.authService.userIdRequest !== undefined)
+    if (this.authService.userIdRequest !== undefined) {
+      this.isLogin = true;
       this.showCamera = true;
+    }
+
   }
-  // TODO: Remove this code, use handleLiveness class to implement below code
+
   createCustomer(): void {
-    // this.loadingService.showLoading();
 
     this.innovatricsOperation.createCustomer()
       .subscribe(res => {
@@ -74,16 +76,6 @@ export class LoginComponent implements OnInit {
         }
       }
       );
-    // this.innovatricsService.createCustomer().subscribe({
-    //   next: (response: CreateCustomerResponse) => {
-    //     this.createLiveness(response.id)
-    //   },
-    //   complete: () => {
-    //   },
-    //   error: (error) => {
-    //     console.error('Error create customer:', error);
-    //   }
-    // })
   }
 
   createLiveness(customerId: string): void {
@@ -94,23 +86,10 @@ export class LoginComponent implements OnInit {
           this.generatePassiveLivenessSelfie()
         }
       })
-
-    // this.innovatricsService.createLiveness(customerId).subscribe({
-    //   next: (response: CreateCustomerResponse) => {
-    //     this.showCamera = true;
-    //     this.customerId = customerId;
-    //     this.loadingService.hideLoading();
-    //   },
-    //   error: (error) => {
-    //     this.loadingService.hideLoading();
-    //     console.error('Error create liveness:', error);
-    //   }
-    // })
   }
 
   generatePassiveLivenessSelfie() {
-    // this.photoImage = jpegBase64ToStringBase64(image);
-    // this.passiveLivenessSelfieModel.image.Data = this.photoImage;
+
     this.progressMessage = 'Generate Passive Liveness Selfie...'
     this.innovatricsOperation.generatePassiveLivenessSelfie(this.unEditedImage, this.customerId)
       .subscribe(res => {
@@ -119,14 +98,6 @@ export class LoginComponent implements OnInit {
           this.evaluatePassiveLiveness();
         }
       })
-    // this.innovatricsService.generatePassiveLivenessSelfie(this.customerId, this.passiveLivenessSelfieModel).subscribe({
-    //   next: (_) => {
-    //     this.evaluatePassiveLiveness();
-    //   },
-    //   error: (error) => {
-    //     console.error('Error Generating Passive Liveness Selfie:', error);
-    //   }
-    // })
   }
 
   evaluatePassiveLiveness() {
@@ -143,23 +114,6 @@ export class LoginComponent implements OnInit {
 
         this.probeFaceVerification(this.photoImage);
       })
-    // this.innovatricsService.evaluatePassiveLiveness(this.customerId).subscribe({
-    //   next: (response: ScoreResponse) => {
-    //     const score: number = +response.score;
-
-    //     if (score < 0.89) {
-    //       this.retryCount++;
-    //       // this.evaluateRetries() => Delete this code after testing retry flag
-    //       //Set flag for retryFlag failed liveness
-    //       this.alertService.error(`Failed Liveness. Please try again. Left with ${this.maxRetry - this.retryCount} attempts!`);
-    //       return;
-    //     }
-    //     this.probeFaceVerification(this.photoImage);
-    //   },
-    //   error: (error) => {
-    //     console.error('Error Evaluating Passive Liveness:', error);
-    //   }
-    // })
   }
 
   probeFaceVerification(image: unknown) {
@@ -171,21 +125,16 @@ export class LoginComponent implements OnInit {
     this.probeFaceRequest.eDNAId = this.authService.userIdRequest.eDNAId;
     this.probeFaceRequest.idNumber = this.authService.userIdRequest.SAId;
 
-    // this.loadingService.showLoading();
-    this.isLogin = true;
-
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: UserModel) => {
-        // this.loadingService.hideLoading();
         this.isLogin = false;
         this.progressMessage = ' ';
-        this.authService.login(response)
+        this.authService.login(response);
       },
       complete: () => {
       },
       error: (error) => {
-        // this.loadingService.hideLoading();
-        console.error('Error registering user:', error);
+        this.alertService.error('Error registering user', error);
       }
     })
   }
@@ -204,8 +153,6 @@ export class LoginComponent implements OnInit {
         this.alertService.clear();
         this.unEditedImage = base64String;
         this.createCustomer();
-        //Set flag retryFlag = true/false
-        // this.generatePassiveLivenessSelfie(base64String);
       });
     this.isButtonDisabled = true;
   }

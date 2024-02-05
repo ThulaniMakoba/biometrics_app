@@ -13,6 +13,7 @@
 
     <app-face-auto-capture (onPhotoTaken)="handlePhotoTaken($event)" (onError)="handleError($event)" 
     [isLogin]="isLogin"
+    [showSpinner] = "showSpinner"
      [progressMessage] ="progressMessage">
     </app-face-auto-capture>   
 </div>
