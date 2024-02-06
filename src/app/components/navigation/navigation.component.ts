@@ -23,9 +23,7 @@ export class NavigationComponent implements OnInit {
     this.dialogService.openLoginDialog().subscribe(result => {
       console.log('Dialog closed with result:', result);
     });
-  }
-
-  
+  }  
   fetchComputerSidNumber(): void {
     this.config.fetchComputerSidNumber().subscribe({
       next: (response: ComputerConfigResponse) => {
