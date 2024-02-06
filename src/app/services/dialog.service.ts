@@ -14,7 +14,7 @@ export class DialogService {
   openLoginDialog(): Observable<any> {
     const dialogRef = this.dialog.open(LoginDialogComponent, {
       width: '400px', // Adjust the width as needed
-      disableClose: false,
+      disableClose: true,
     });
 
     return dialogRef.afterClosed();

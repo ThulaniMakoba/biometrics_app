@@ -1,46 +1,56 @@
 /* login-dialog.component.css */
 .login-dialog-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
-    /* width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  /* width: 80%;
     height: 100%; */
-  }
-  
-  h2 {
-    color: #179ee1;
-    margin-bottom: 20px;
-  }
-  
-  mat-radio-group {
-    margin-bottom: 20px;
-  }
-  
-  /* Adjust alignment based on your preference */
-  mat-radio-button {
-    margin-bottom: 10px;
-    color: #333; /* Set color for radio button label */
-  }
-  
-  .button-container {
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  button {
-    background-color: #2196F3;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #1565c0;
-  }
-  
+}
+
+h2 {
+  color: #179ee1;
+  margin-bottom: 20px;
+}
+
+mat-radio-group {
+  margin-bottom: 20px;
+}
+
+/* Adjust alignment based on your preference */
+mat-radio-button {
+  margin-bottom: 10px;
+  color: #333;
+  /* Set color for radio button label */
+}
+
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+button {
+  background-color: #2196F3;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #1565c0;
+}
+
+.login-dialog-form {
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
+}
+
+.login-dialog-width {
+  width: 100%;
+}

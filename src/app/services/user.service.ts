@@ -7,6 +7,7 @@ import { VerificationResponse } from '../models/verification-response.model';
 import { ProbeFaceRequest } from '../models/probe-face-request.model';
 import { RegisterUserResponse } from '../models/register-user-response.model';
 import { environment } from '../../../src/environments/environment';
+import { AuthenticationOptionRequest } from '../models/authentication-option-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,5 +23,9 @@ export class UserService {
 
   probeFaceVerification(request: ProbeFaceRequest): Observable<UserModel> {
     return this.http.post<UserModel>(`${this.apiUrl}/probe-face`, request)
+  }
+
+  validateAuthOption(request: AuthenticationOptionRequest): Observable<UserModel>{
+    return this.http.post<UserModel>(`${this.apiUrl}/validate-authentication-option`, request)
   }
 }

@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MessageService } from './message.service';
 import { UserModel } from '../models/user-model';
 import { LoginIdDialogRequest } from '../models/login-id-dialog-request.model';
+import { AuthenticationOptionRequest } from '../models/authentication-option-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class AuthService {
   retryCount: number = 0;
   maxRetry: number = 3;
   isAccountLocked: boolean = false;
-  userIdRequest: LoginIdDialogRequest
+  userDetailRequest: UserModel
 
   constructor(
     private alertService: AlertService,
@@ -23,8 +24,8 @@ export class AuthService {
   ) { }
 
 
-  passIDtoLogin(idRequest: LoginIdDialogRequest) {
-    this.userIdRequest = idRequest;
+  passIDtoLogin(userDetailRequest: UserModel) {
+    this.userDetailRequest = userDetailRequest;
     this.router.navigate(['login']);
   }
 
@@ -34,7 +35,7 @@ export class AuthService {
     if (userDetails.isSuccess) {
       this.session = { isAuthenticated: true };
       this.alertService.error("Login Successfully");
-      this.messageService.sendUserDetails(userDetails);
+      this.messageService.sendUserDetails(this.userDetailRequest);
       this.retryCount = 0;
       this.clearMessage(10000);
       this.router.navigate(['/home'])
@@ -49,6 +50,7 @@ export class AuthService {
 
   logout() {
     this.session = null;
+    this.retryCount = 0;
     this.alertService.success("Logout Successful");
     this.messageService.clearUserDetails();
     this.clearMessage(5000);

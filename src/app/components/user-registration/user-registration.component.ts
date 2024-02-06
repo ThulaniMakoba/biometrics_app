@@ -52,6 +52,7 @@ export class UserRegistrationComponent {
     email: '',
     idNumber: '',
     isSuccess: false,
+    userId: 0,
   };
 
   userRegistrationForm = new FormGroup({

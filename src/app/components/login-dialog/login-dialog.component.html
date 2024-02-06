@@ -1,35 +1,23 @@
-<!-- login-dialog.component.html -->
 <div class="login-dialog-container">
-  <h2>Authenticate With:</h2>
+  <form class="login-dialog-form">
+    <h2>Authenticate With:</h2>
 
-  <mat-radio-group [(ngModel)]="selectedOption">
-    <!-- <mat-radio-button value="option1">SA ID Number</mat-radio-button>
-    <br>
-    <mat-radio-button value="option2">eDNA ID</mat-radio-button> -->
-    <mat-radio-button value="option3">Email Address</mat-radio-button>
-  </mat-radio-group>
+    <mat-form-field class="login-dialog-width ">
+      <mat-label>Email</mat-label>
+      <input type="email" matInput [formControl]="loginDialogFormControl" placeholder="Ex.Organization email"
+        maxlength="50">
+      <mat-error>Please enter a valid email address</mat-error>
+    </mat-form-field>
+    <span class="text-danger" *ngIf="emailNotFound && !loginDialogFormControl.errors">
+      Email does not exist!
+    </span>
 
-  <!-- Display the text box only when "SA ID Number" is selected -->
-  <div *ngIf="selectedOption === 'option1'">
-    <label for="saIdInput">SA ID:</label>
-    <input type="text" id="saIdInput" [(ngModel)]="saId" maxlength="13">
-  </div>
+    <div class="button-container">
+      <button mat-button (click)="navigateToLogin()"
+        [disabled]="!loginDialogFormControl.touched || loginDialogFormControl.invalid">Next</button>
+      <button mat-button (click)="onClose()">Close</button>
+    </div>
 
-  <!-- Display the text box only when "eDNA ID" is selected -->
-  <div *ngIf="selectedOption === 'option2'">
-    <label for="ednaIdInput">eDNA ID:</label>
-    <input type="text" id="ednaIdInput" [(ngModel)]="ednaId" maxlength="6">
-  </div>
+  </form>
 
-  <!-- Display the text box only when "Email" is selected -->
-  <div *ngIf="selectedOption === 'option3'">
-    <label for="emailInput">Email:</label>
-    <input type="text" id="emailInput" [(ngModel)]="adEmailAddress" maxlength="50">
-  </div>
-
-  <div class="button-container">
-    <!-- Disable the "Next" button when no option is selected or the associated text field is empty -->
-    <button mat-button (click)="navigateToLogin()" [disabled]="!selectedOption || (selectedOption === 'option1' && !saId) || (selectedOption === 'option2' && !ednaId)">Next</button>
-    <button mat-button (click)="onClose()">Close</button>
-  </div>    
 </div>

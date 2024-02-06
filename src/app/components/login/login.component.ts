@@ -11,6 +11,7 @@ import { OnPhotoTakenEventValue } from 'src/app/types';
 import { blobToBase64 } from 'src/app/utils/helpers';
 import { LoginIdDialogRequest } from 'src/app/models/login-id-dialog-request.model';
 import { InnovatricsOperations } from 'src/app/shared/innovatrics-operations.class';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -40,14 +41,16 @@ export class LoginComponent implements OnInit {
     private authService: AuthService,
     private alertService: AlertService,
     public loadingService: LoadingService,
-    private innovatricsOperation: InnovatricsOperations
+    private innovatricsOperation: InnovatricsOperations,
+    private router: Router,
   ) { }
 
   ngOnInit(): void {
-    if (this.authService.userIdRequest !== undefined) {
+    if (this.authService.userDetailRequest !== undefined) {
       this.isLogin = true;
       this.showCamera = true;
-    }
+    } else
+      this.router.navigate(['/home'])
   }
 
   createCustomer(): void {
@@ -103,9 +106,10 @@ export class LoginComponent implements OnInit {
     this.probeFaceRequest.Detection.Mode = 'STRICT';
     this.probeFaceRequest.Detection.Facesizeratio.Max = 0.5;
     this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
-    this.probeFaceRequest.eDNAId = this.authService.userIdRequest.eDNAId;
-    this.probeFaceRequest.idNumber = this.authService.userIdRequest.SAId;
-    this.probeFaceRequest.email = this.authService.userIdRequest.ADEmailAddress;
+    this.probeFaceRequest.UserId = this.authService.userDetailRequest.userId;
+    // this.probeFaceRequest.eDNAId = this.authService.userIdRequest.eDNAId;
+    // this.probeFaceRequest.idNumber = this.authService.userIdRequest.idNumber;
+    // this.probeFaceRequest.email = this.authService.userIdRequest.email;
 
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: UserModel) => {
@@ -134,6 +138,7 @@ export class LoginComponent implements OnInit {
         this.showSpinner = true;
         this.alertService.clear();
         this.unEditedImage = base64String;
+        this.isLogin = true;
         this.createCustomer();
       });
     this.isButtonDisabled = true;
