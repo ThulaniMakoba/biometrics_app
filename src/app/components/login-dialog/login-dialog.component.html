@@ -3,9 +3,10 @@
   <h2>Authenticate With:</h2>
 
   <mat-radio-group [(ngModel)]="selectedOption">
-    <mat-radio-button value="option1">SA ID Number</mat-radio-button>
+    <!-- <mat-radio-button value="option1">SA ID Number</mat-radio-button>
     <br>
-    <mat-radio-button value="option2">eDNA ID</mat-radio-button>
+    <mat-radio-button value="option2">eDNA ID</mat-radio-button> -->
+    <mat-radio-button value="option3">Email Address</mat-radio-button>
   </mat-radio-group>
 
   <!-- Display the text box only when "SA ID Number" is selected -->
@@ -18,6 +19,12 @@
   <div *ngIf="selectedOption === 'option2'">
     <label for="ednaIdInput">eDNA ID:</label>
     <input type="text" id="ednaIdInput" [(ngModel)]="ednaId" maxlength="6">
+  </div>
+
+  <!-- Display the text box only when "Email" is selected -->
+  <div *ngIf="selectedOption === 'option3'">
+    <label for="emailInput">Email:</label>
+    <input type="text" id="emailInput" [(ngModel)]="adEmailAddress" maxlength="50">
   </div>
 
   <div class="button-container">

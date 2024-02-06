@@ -15,16 +15,19 @@ export class LoginDialogComponent implements OnInit {
   selectedOption: string = ''; 
   saId: string = ''; 
   ednaId: number = 0;
+  adEmailAddress: string = '';
 
   constructor(public dialogRef: MatDialogRef<LoginDialogComponent>,private router: Router,
     public authService:AuthService) { }
 
   navigateToLogin() {
     // Determine which ID to pass based on the selected option
-    const idToPass = this.selectedOption === 'option1' ? this.saId : this.ednaId;    
+    //const idToPass = this.selectedOption === 'option1' ? this.saId : this.ednaId;    
+    const idToPass = this.selectedOption === 'option3' ? this.adEmailAddress:this.saId;    
     const request: LoginIdDialogRequest = {
       eDNAId: this.ednaId,
-      SAId: this.saId
+      SAId: this.saId,
+      ADEmailAddress: this.adEmailAddress
     }
     this.authService.passIDtoLogin(request);
     

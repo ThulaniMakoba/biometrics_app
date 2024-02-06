@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { CreateCustomerResponse } from 'src/app/models/create-customer-response.model';
 import { CreateReferenceFaceRequestModel, DetectionModel } from 'src/app/models/create-reference-face-request.model';
 import { CreateReferenceFaceResponse } from 'src/app/models/create-reference-face-response.model';
@@ -11,6 +12,8 @@ import { UserModel } from 'src/app/models/user-model';
 import { VerificationResponse } from 'src/app/models/verification-response.model';
 import { VerificationRequest } from 'src/app/models/verify-user-request.model';
 import { AlertService } from 'src/app/services/alert.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { DialogService } from 'src/app/services/dialog.service';
 import { InnovatricsService } from 'src/app/services/innovatrics.service';
 import { MessageService } from 'src/app/services/message.service';
 import { UserService } from 'src/app/services/user.service';
@@ -39,7 +42,7 @@ export class UserRegistrationComponent {
   idNumber: string = '';
   unEditedImage: unknown;
   ednaNumber: number;
-
+  
   motherboardSerialNumber: string | null = localStorage.getItem('motherboardSerialNumber');
   motherboardSerialNumberExist: string | null = localStorage.getItem('motherboardSerialNumberExist');
 
@@ -72,7 +75,8 @@ export class UserRegistrationComponent {
   passiveLivenessSelfieModel: PassiveLivenessSelfieRequestModel = new PassiveLivenessSelfieRequestModel();
 
   constructor(private userService: UserService, private innovatricsOperation: InnovatricsOperations, private formBuilder: FormBuilder,
-    private innovatricsService: InnovatricsService, private alertService: AlertService) { }
+    private innovatricsService: InnovatricsService, private alertService: AlertService,
+    private dialogService: DialogService,private dialog: MatDialog,public authService: AuthService) { }
 
   ngOnInit() {
 
@@ -96,6 +100,17 @@ export class UserRegistrationComponent {
     this.userRegistrationForm.controls['email'].disable();
   }
 
+  onRecaptureClick() {  
+    this.imageUrl = ""; 
+    this.alertService.success(`eDNA user Id: ${this.ednaNumber}`)
+  }
+
+
+  openLoginDialog() {
+    this.dialogService.openLoginDialog().subscribe(result => {
+      console.log('Dialog closed with result:', result);
+    });
+  }
   validateIDNumber() {
     const idNumberControl = this.userRegistrationForm.get('idNumber');
     if (idNumberControl?.value) {
