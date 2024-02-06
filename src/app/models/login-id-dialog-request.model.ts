@@ -1,7 +1,7 @@
-export interface LoginIdDialogRequest{
+export interface LoginIdDialogRequest {
 
-    eDNAId : number;
+    eDNAId: number | undefined;
     SAId: string;
-    ADEmailAddress:string;
+    ADEmailAddress: string;
 
 }

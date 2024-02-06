@@ -3,4 +3,5 @@ import { CreateReferenceFaceRequestModel } from "./create-reference-face-request
 export class ProbeFaceRequest extends CreateReferenceFaceRequestModel {
     public idNumber?: string;
     public eDNAId?: number;
+    public email?: string;
 }

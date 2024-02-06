@@ -1,21 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { CreateCustomerResponse } from 'src/app/models/create-customer-response.model';
 import { PassiveLivenessSelfieRequestModel } from 'src/app/models/passive-liveness-selfie-request.model';
 import { ProbeFaceRequest } from 'src/app/models/probe-face-request.model';
-import { ScoreResponse } from 'src/app/models/score-response.model';
 import { UserModel } from 'src/app/models/user-model';
-import { VerificationResponse } from 'src/app/models/verification-response.model';
 import { VerificationRequest } from 'src/app/models/verify-user-request.model';
 import { AlertService } from 'src/app/services/alert.service';
 import { AuthService } from 'src/app/services/auth.service';
-import { DialogService } from 'src/app/services/dialog.service';
-import { InnovatricsService } from 'src/app/services/innovatrics.service';
 import { LoadingService } from 'src/app/services/loading.service';
 import { UserService } from 'src/app/services/user.service';
 import { OnPhotoTakenEventValue } from 'src/app/types';
-import { blobToBase64, jpegBase64ToStringBase64 } from 'src/app/utils/helpers';
-import { LoginDialogComponent } from '../login-dialog/login-dialog.component';
+import { blobToBase64 } from 'src/app/utils/helpers';
 import { LoginIdDialogRequest } from 'src/app/models/login-id-dialog-request.model';
 import { InnovatricsOperations } from 'src/app/shared/innovatrics-operations.class';
 
@@ -39,35 +32,25 @@ export class LoginComponent implements OnInit {
   isButtonDisabled = false;
   showSpinner: boolean = false;
   progressMessage: string = '';
-  isLogin = false;  
+  isLogin = false;
   requestLoginHolder: LoginIdDialogRequest;
   unEditedImage: unknown;
 
-
-  userVerification: VerificationRequest = {
-    computerMotherboardSerialNumber: localStorage.getItem('motherboardSerialNumber') ?? ""
-  }
-
   constructor(private userService: UserService,
     private authService: AuthService,
-    private innovatricsService: InnovatricsService,
     private alertService: AlertService,
     public loadingService: LoadingService,
     private innovatricsOperation: InnovatricsOperations
-
   ) { }
 
   ngOnInit(): void {
-
     if (this.authService.userIdRequest !== undefined) {
       this.isLogin = true;
       this.showCamera = true;
     }
-
   }
 
   createCustomer(): void {
-
     this.innovatricsOperation.createCustomer()
       .subscribe(res => {
         if (res != undefined) {
@@ -79,7 +62,6 @@ export class LoginComponent implements OnInit {
   }
 
   createLiveness(customerId: string): void {
-
     this.innovatricsOperation.createLiveness(customerId)
       .subscribe(res => {
         if (res) {
@@ -89,7 +71,6 @@ export class LoginComponent implements OnInit {
   }
 
   generatePassiveLivenessSelfie() {
-
     this.progressMessage = 'Generate Passive Liveness Selfie...'
     this.innovatricsOperation.generatePassiveLivenessSelfie(this.unEditedImage, this.customerId)
       .subscribe(res => {
@@ -124,6 +105,7 @@ export class LoginComponent implements OnInit {
     this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
     this.probeFaceRequest.eDNAId = this.authService.userIdRequest.eDNAId;
     this.probeFaceRequest.idNumber = this.authService.userIdRequest.SAId;
+    this.probeFaceRequest.email = this.authService.userIdRequest.ADEmailAddress;
 
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: UserModel) => {
@@ -134,7 +116,7 @@ export class LoginComponent implements OnInit {
       complete: () => {
       },
       error: (error) => {
-        this.alertService.error('Error registering user', error);
+        this.alertService.error('Server error on authentication', error);
       }
     })
   }
