@@ -42,9 +42,9 @@ export class LoginDialogComponent {
           this.authService.passIDtoLogin(response);
           this.dialogRef.close();
         }
-
-        this.emailNotFound = true;
-        // this.authService.login(response);
+        else {
+          this.emailNotFound = true;
+        }
       },
       complete: () => {
       },
