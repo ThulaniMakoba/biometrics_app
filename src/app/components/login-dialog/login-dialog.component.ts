@@ -21,6 +21,7 @@ export class LoginDialogComponent {
   ednaId: number | undefined;
   adEmailAddress: string = '';
   emailNotFound: boolean = false;
+  recapturingEmail: boolean = false;
 
 
   constructor(public dialogRef: MatDialogRef<LoginDialogComponent>, private router: Router,
@@ -55,8 +56,15 @@ export class LoginDialogComponent {
     })
   }
 
+  updateEmailNotFound(): void {
+    this.emailNotFound = false;
+  }
+
   onClose(): void {
     this.dialogRef.close();
     this.router.navigate(['home']);
+  }
+  recaptureEmail() {
+    this.recapturingEmail = true;
   }
 }

@@ -41,7 +41,12 @@ export class UserRegistrationComponent {
   progressMessage: string = '';
   idNumber: string = '';
   unEditedImage: unknown;
-  ednaNumber: number;
+  ednaNumber: number;  
+  timer: any;
+  cachedUserId:number = 0;
+  cachedEdnaNumber:number = 0;
+
+  
   
   motherboardSerialNumber: string | null = localStorage.getItem('motherboardSerialNumber');
   motherboardSerialNumberExist: string | null = localStorage.getItem('motherboardSerialNumberExist');
@@ -80,15 +85,35 @@ export class UserRegistrationComponent {
     private dialogService: DialogService,private dialog: MatDialog,public authService: AuthService) { }
 
   ngOnInit() {
+    
+    const cachedEdnaNumberStr = localStorage.getItem('cachedEdnaNumber');
+    const cachedUserIdStr = localStorage.getItem('cachedUserId');
+    this.cachedEdnaNumber = cachedEdnaNumberStr ? +cachedEdnaNumberStr : 0;
+    this.cachedUserId = cachedUserIdStr ? +cachedUserIdStr : 0;
 
-    this.userRegistrationForm = this.formBuilder.group({
-      idNumber: ['', [Validators.required]],
-      //idNumber: new FormControl<string | null>(''), 
-      firstName: ['', Validators.required],
-      lastName: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-
-    });
+    debugger
+    if(this.cachedEdnaNumber > 0 && this.cachedUserId > 0)
+    {
+      this.showRegistration = false;
+      this.showCamera = true;
+      console.log(this.cachedEdnaNumber);
+      this.userId = this.cachedUserId;
+      this.ednaNumber = this.cachedEdnaNumber;
+    }
+    else{
+      this.userRegistrationForm = this.formBuilder.group({
+        idNumber: ['', [Validators.required]],
+        //idNumber: new FormControl<string | null>(''), 
+        firstName: ['', Validators.required],
+        lastName: ['', Validators.required],
+        email: ['', [Validators.required, Validators.email]],
+      });  
+    }
+      
+    //  localStorage.removeItem('cachedEdnaNumber');
+    //  localStorage.removeItem('cachedUserId');
+    //    this.cachedEdnaNumber = 0;
+    //    this.cachedUserId = 0
   }
   protected get f() {
     return this.userRegistrationForm.controls;
@@ -132,25 +157,52 @@ export class UserRegistrationComponent {
     }
     if (this.userRegistrationForm.invalid)
       return;
-    this.handleUserDetailsFormData();
+
+    this.loading = true;
+    this.handleUserDetailsFormData();    
+   
     this.userService.register(this.userModel).subscribe({
       next: (response: RegisterUserResponse) => {
-        if (response.userId > 0) {
+        
+        if (response.userId > 0) {         
+          this.loading = true;
           this.alertService.success(`User Details successfully saved. eDNA user Id: ${response.ednaId}`, false);
+          this.loading = false;
           this.ednaNumber = response.ednaId
           this.userId = response.userId;
           this.showCamera = true;
-          this.showRegistration = false;
+          this.showRegistration = false; 
+
+          this.cachedEdnaNumber = response.ednaId;
+          localStorage.setItem('cachedEdnaNumber',this.cachedEdnaNumber.toString());
+          this.cachedUserId = response.userId;  
+          localStorage.setItem('cachedUserId',this.cachedUserId.toString());
+
           return;
         }
+        this.loading = true;
+        //this.startTimer();
         this.alertService.error(response.message, false)
+        this.loading = false;
       },
-      error: (error) => {
-        this.alertService.error(`Error registering user ${error} `, false)
+      error: (error) => {    
+        debugger    
+        this.alertService.error(`Error registering user ${error} `, false)   
+        this.loading = false;     
+      },
+      complete: () => {
+        //this.loading = false; 
       }
     })
   }
 
+  startTimer(): void {
+    this.timer = setTimeout(() => {
+      //this.loading = false;       
+      // this.showCamera = true;
+      // this.showRegistration = false;
+    }, 10000); // 10 seconds in milliseconds
+  }
   createCustomer(): void {
 
     this.innovatricsOperation.createCustomer()
@@ -209,6 +261,11 @@ export class UserRegistrationComponent {
         if (response.errorMessage !== null || response.errorCode !== null) {
           this.alertService.error(`${response.errorMessage}, Please try again`,);
           this.showSpinner = false;
+
+          localStorage.removeItem('cachedEdnaNumber');
+          localStorage.removeItem('cachedUserId');
+          this.cachedEdnaNumber = 0;
+          this.cachedUserId = 0
           return;
         } else {
           this.convertBase64ToImageUrl(response.base64Image);
@@ -272,14 +329,18 @@ export class UserRegistrationComponent {
         this.unEditedImage = base64String;
         this.createCustomer();
         this.alertService.clear();
+       
+   
       });
   }
 
   handleError(error: Error) {
+   
     alert(error);
   }
 
   protected resetForm(): void {
     this.userRegistrationForm.reset();
+    this.alertService.clear(); 
   }
 }

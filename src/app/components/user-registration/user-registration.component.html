@@ -59,15 +59,18 @@
                     </div>
 
                     <div *ngIf="!hideActionButtons" class="d-flex justify-content-between">
-                        <button type="reset" class="btn btn-danger">
+                        <button type="reset" (click)="resetForm()" class="btn btn-danger">
                             Reset <i class="fas fa-times"></i>
                         </button>
-                        <button type="submit" class="btn btn-success ms-auto" mat-raised-button color="primary">
+                        <!-- <button type="submit" class="btn btn-success ms-auto" mat-raised-button color="primary">
                             Capture Face <i class="fas fa-smile" style="margin-right: 5px;"></i><i
                                 class="fas fa-arrow-right"></i>
-                        </button>
+                        </button> -->
+                        <button type="submit" class="btn btn-success ms-auto" mat-raised-button color="primary" [disabled]="loading">
+                            <span *ngIf="!loading">Capture Face <i class="fas fa-smile" style="margin-right: 5px;"></i><i class="fas fa-arrow-right"></i></span>
+                            <span *ngIf="loading">Loading... <i class="fas fa-spinner fa-spin"></i></span>
+                          </button>
                     </div>
-
                 </form>
             </div>
         </div>
