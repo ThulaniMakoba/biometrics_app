@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  //ednaServiceApiUrl:'https://ednaapi.ednais.co.za'
   ednaServiceApiUrl:'http://localhost:5111'
 };
 

@@ -23,7 +23,6 @@ export class AuthService {
     private messageService: MessageService
   ) { }
 
-
   passIDtoLogin(userDetailRequest: UserModel) {
     this.userDetailRequest = userDetailRequest;
     this.router.navigate(['login']);

@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectorRef } from '@angular/core';
 import { OnPhotoTakenEventValue, Step } from 'src/app/types';
 import {
   dispatchControlEvent,
@@ -49,7 +49,9 @@ export class FaceAutoCaptureComponent implements OnInit {
     this.isButtonDisabled = true;
     this.isBackButtonDisabled = true;
     this.showCameraComponent = true; // Show the camera component
-    this.onContinueDetection.emit(); 
+    //this.onContinueDetection.emit(); 
+      
+    //this.cdRef.detectChanges();
   }
 
   handlePhotoTaken({ imageData, content }: OnPhotoTakenEventValue<FaceComponentData>) {

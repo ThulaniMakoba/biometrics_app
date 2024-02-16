@@ -1,3 +1,4 @@
 export const environment = {
-  production: true
+  production: true,
+  ednaServiceApiUrl:'https://ednaapi.ednais.co.za'
 };

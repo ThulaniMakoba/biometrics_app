@@ -36,6 +36,8 @@ export class LoginComponent implements OnInit {
   isLogin = false;
   requestLoginHolder: LoginIdDialogRequest;
   unEditedImage: unknown;
+  cachedUserId:number = 0;
+  cachedEdnaNumber:number = 0;
 
   constructor(private userService: UserService,
     private authService: AuthService,
@@ -46,11 +48,19 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    if (this.authService.userDetailRequest !== undefined) {
+     
+    //Get cached userModel
+    const storedUserDetails = localStorage.getItem('userDetails');
+
+    console.log('My ' +storedUserDetails);  
+    
+   // if (this.authService.userDetailRequest !== undefined) {
+    if(storedUserDetails !== null){
       this.isLogin = true;
-      this.showCamera = true;
+      this.showCamera = true; 
     } else
       this.router.navigate(['/home'])
+
   }
 
   createCustomer(): void {
