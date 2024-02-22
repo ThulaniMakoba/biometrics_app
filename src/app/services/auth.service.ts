@@ -15,7 +15,8 @@ export class AuthService {
   retryCount: number = 0;
   maxRetry: number = 3;
   isAccountLocked: boolean = false;
-  userDetailRequest: UserModel
+  userDetailRequest: UserModel;
+  //cachedUserId:number = 0;
 
   constructor(
     private alertService: AlertService,
@@ -25,12 +26,18 @@ export class AuthService {
 
   passIDtoLogin(userDetailRequest: UserModel) {
     this.userDetailRequest = userDetailRequest;
+    // const cachedUserIdStr = localStorage.getItem('cachedUserId');
+    // this.cachedUserId = cachedUserIdStr ? +cachedUserIdStr : 0;
+
+    // this.cachedUserId = userDetailRequest.userId;  
+    // localStorage.setItem('cachedUserId',this.cachedUserId.toString());
+    
     this.router.navigate(['login']);
   }
 
-
+  
   login(userDetails: UserModel) {
-
+    
     if (userDetails.isSuccess) {
       this.session = { isAuthenticated: true };
       this.alertService.error("Login Successfully");

@@ -38,6 +38,19 @@ export class LoginComponent implements OnInit {
   unEditedImage: unknown;
   cachedUserId:number = 0;
   cachedEdnaNumber:number = 0;
+  cachedUserModel : string;
+  cachedUserDetailsReq : string;
+  
+
+  userModel: UserModel = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    idNumber: '',
+    isSuccess: false,
+    userId: 0,
+  };
+
 
   constructor(private userService: UserService,
     private authService: AuthService,
@@ -49,20 +62,50 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
      
-    //Get cached userModel
-    const storedUserDetails = localStorage.getItem('userDetails');
-
-    console.log('My ' +storedUserDetails);  
     
-   // if (this.authService.userDetailRequest !== undefined) {
-    if(storedUserDetails !== null){
-      this.isLogin = true;
-      this.showCamera = true; 
-    } else
-      this.router.navigate(['/home'])
+      this.saveToLocalStorage();
 
+    if(this.authService.userDetailRequest !== undefined){
+     // if (this.cachedUserId !== null) {   
+        this.isLogin = true;
+        this.showCamera = true; 
+      } else
+        this.router.navigate(['/home'])
   }
 
+  saveToLocalStorage(): void{
+
+      const cachedUserIdStr = localStorage.getItem('cachedUserId');      
+      this.cachedUserId = cachedUserIdStr ? +cachedUserIdStr : 0;  
+
+      const cachedEdnaNumberStr = localStorage.getItem('cachedEdnaNumber');      
+      this.cachedEdnaNumber = cachedEdnaNumberStr ? +cachedEdnaNumberStr : 0;
+
+      debugger
+      if (performance.navigation.type === 1) {
+        console.log('Page was manually refreshed.'); //refresh clicked
+        this.authService.userDetailRequest;
+        const storedUserDetailsRequest: string | null = localStorage.getItem('userDetailsRequest');
+        let storeduserDetailsRequestFromLocalStorage: UserModel;
+
+        if (storedUserDetailsRequest !== null) {
+          storeduserDetailsRequestFromLocalStorage = JSON.parse(storedUserDetailsRequest);
+          this.authService.userDetailRequest = storeduserDetailsRequestFromLocalStorage;
+        } 
+      }else {
+          console.log('Page was not manually refreshed.'); //first time loading 
+          localStorage.setItem('userDetailsRequest',JSON.stringify(this.authService.userDetailRequest));    
+          const storedUserDetailsRequest: string | null = localStorage.getItem('userDetailsRequest');
+          let storeduserDetailsRequestFromLocalStorage: string;
+
+          if (storedUserDetailsRequest !== null) {
+              storeduserDetailsRequestFromLocalStorage = JSON.parse(storedUserDetailsRequest);
+          } 
+          else {    
+              storeduserDetailsRequestFromLocalStorage = ""; 
+          }   
+       }
+  }
   createCustomer(): void {
     this.innovatricsOperation.createCustomer()
       .subscribe(res => {
@@ -116,16 +159,22 @@ export class LoginComponent implements OnInit {
     this.probeFaceRequest.Detection.Mode = 'STRICT';
     this.probeFaceRequest.Detection.Facesizeratio.Max = 0.5;
     this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
-    this.probeFaceRequest.UserId = this.authService.userDetailRequest.userId;
+    this.probeFaceRequest.UserId = this.authService.userDetailRequest.userId; //this.cachedUserId;
     // this.probeFaceRequest.eDNAId = this.authService.userIdRequest.eDNAId;
     // this.probeFaceRequest.idNumber = this.authService.userIdRequest.idNumber;
     // this.probeFaceRequest.email = this.authService.userIdRequest.email;
 
+    
     this.userService.probeFaceVerification(this.probeFaceRequest).subscribe({
       next: (response: UserModel) => {
         this.isLogin = false;
-        this.progressMessage = ' ';
+        this.progressMessage = ' ';        
         this.authService.login(response);
+        
+           localStorage.removeItem('cachedUserId');         
+           this.cachedUserId = 0;
+           //localStorage.removeItem('userDetailsRequest');
+           performance.navigation.type === 0
       },
       complete: () => {
       },
