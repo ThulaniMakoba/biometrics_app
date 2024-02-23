@@ -16,8 +16,7 @@ export class AuthService {
   maxRetry: number = 3;
   isAccountLocked: boolean = false;
   userDetailRequest: UserModel;
-  //cachedUserId:number = 0;
-
+  
   constructor(
     private alertService: AlertService,
     private router: Router,
@@ -26,28 +25,28 @@ export class AuthService {
 
   passIDtoLogin(userDetailRequest: UserModel) {
     this.userDetailRequest = userDetailRequest;
-    // const cachedUserIdStr = localStorage.getItem('cachedUserId');
-    // this.cachedUserId = cachedUserIdStr ? +cachedUserIdStr : 0;
-
-    // this.cachedUserId = userDetailRequest.userId;  
-    // localStorage.setItem('cachedUserId',this.cachedUserId.toString());
-    
+   
+    localStorage.setItem('cachedUserIdLogin',userDetailRequest.userId.toString());
     this.router.navigate(['login']);
   }
 
   
   login(userDetails: UserModel) {
-    
+    let cachedCount = localStorage.getItem('authRetryCount');   
+    this.retryCount = cachedCount == null ? 0:+cachedCount;
     if (userDetails.isSuccess) {
       this.session = { isAuthenticated: true };
       this.alertService.error("Login Successfully");
-      this.messageService.sendUserDetails(this.userDetailRequest);
+      userDetails.firstName = 'Login';
+      this.messageService.sendUserDetails(userDetails);
       this.retryCount = 0;
+      localStorage.removeItem('authRetryCount')
       this.clearMessage(10000);
       this.router.navigate(['/home'])
     }
     else {
       this.retryCount++;
+      localStorage.setItem('authRetryCount',this.retryCount.toString());
       this.alertService.error(`Authentication failed: Face didn't match. Left with ${this.maxRetry - this.retryCount} attempts!`);
       this.evaluateRetries()
       return;
@@ -70,6 +69,8 @@ export class AuthService {
 
 
   evaluateRetries() {
+
+   
     if (this.retryCount === this.maxRetry) {
       this.isAccountLocked = true;
       this.router.navigate(['/locked-out'])

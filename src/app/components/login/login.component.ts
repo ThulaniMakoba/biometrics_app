@@ -61,12 +61,11 @@ export class LoginComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-     
-    
-      this.saveToLocalStorage();
 
-    if(this.authService.userDetailRequest !== undefined){
-     // if (this.cachedUserId !== null) {   
+    let cachedCount = localStorage.getItem('loginRetryCount');    
+    this.retryCount = cachedCount == null ? 0:+cachedCount;
+      this.saveToLocalStorage();
+     if (this.cachedUserId !== null) {   
         this.isLogin = true;
         this.showCamera = true; 
       } else
@@ -75,36 +74,8 @@ export class LoginComponent implements OnInit {
 
   saveToLocalStorage(): void{
 
-      const cachedUserIdStr = localStorage.getItem('cachedUserId');      
+      const cachedUserIdStr = localStorage.getItem('cachedUserIdLogin');      
       this.cachedUserId = cachedUserIdStr ? +cachedUserIdStr : 0;  
-
-      const cachedEdnaNumberStr = localStorage.getItem('cachedEdnaNumber');      
-      this.cachedEdnaNumber = cachedEdnaNumberStr ? +cachedEdnaNumberStr : 0;
-
-      debugger
-      if (performance.navigation.type === 1) {
-        console.log('Page was manually refreshed.'); //refresh clicked
-        this.authService.userDetailRequest;
-        const storedUserDetailsRequest: string | null = localStorage.getItem('userDetailsRequest');
-        let storeduserDetailsRequestFromLocalStorage: UserModel;
-
-        if (storedUserDetailsRequest !== null) {
-          storeduserDetailsRequestFromLocalStorage = JSON.parse(storedUserDetailsRequest);
-          this.authService.userDetailRequest = storeduserDetailsRequestFromLocalStorage;
-        } 
-      }else {
-          console.log('Page was not manually refreshed.'); //first time loading 
-          localStorage.setItem('userDetailsRequest',JSON.stringify(this.authService.userDetailRequest));    
-          const storedUserDetailsRequest: string | null = localStorage.getItem('userDetailsRequest');
-          let storeduserDetailsRequestFromLocalStorage: string;
-
-          if (storedUserDetailsRequest !== null) {
-              storeduserDetailsRequestFromLocalStorage = JSON.parse(storedUserDetailsRequest);
-          } 
-          else {    
-              storeduserDetailsRequestFromLocalStorage = ""; 
-          }   
-       }
   }
   createCustomer(): void {
     this.innovatricsOperation.createCustomer()
@@ -144,22 +115,25 @@ export class LoginComponent implements OnInit {
       .subscribe(res => {
         if (!res) {
           this.retryCount++;
+          localStorage.setItem('loginRetryCount',this.retryCount.toString());
           this.evaluateRetries();
           this.alertService.error(`Failed Liveness. Please try again. Left with ${this.maxRetry - this.retryCount} attempts!`);
           return;
         }
 
         this.probeFaceVerification(this.photoImage);
+
       })
   }
 
   probeFaceVerification(image: unknown) {
+    localStorage.removeItem('loginRetryCount');
     this.progressMessage = 'Authenticating Face for login...'
     this.probeFaceRequest.Image.Data = image;
     this.probeFaceRequest.Detection.Mode = 'STRICT';
     this.probeFaceRequest.Detection.Facesizeratio.Max = 0.5;
     this.probeFaceRequest.Detection.Facesizeratio.Min = 0.05;
-    this.probeFaceRequest.UserId = this.authService.userDetailRequest.userId; //this.cachedUserId;
+    this.probeFaceRequest.UserId = this.cachedUserId;
     // this.probeFaceRequest.eDNAId = this.authService.userIdRequest.eDNAId;
     // this.probeFaceRequest.idNumber = this.authService.userIdRequest.idNumber;
     // this.probeFaceRequest.email = this.authService.userIdRequest.email;
@@ -171,7 +145,7 @@ export class LoginComponent implements OnInit {
         this.progressMessage = ' ';        
         this.authService.login(response);
         
-           localStorage.removeItem('cachedUserId');         
+           localStorage.removeItem('cachedUserIdLogin');         
            this.cachedUserId = 0;
            //localStorage.removeItem('userDetailsRequest');
            performance.navigation.type === 0
@@ -185,6 +159,8 @@ export class LoginComponent implements OnInit {
   }
 
   evaluateRetries() {
+
+    
     if (this.retryCount === this.maxRetry) {
       this.showCamera = false;
     }
